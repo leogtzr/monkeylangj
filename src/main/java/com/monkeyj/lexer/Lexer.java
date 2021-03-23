@@ -64,12 +64,10 @@ public class Lexer {
             default:
                 if (isLetter(this.ch)) {
                     final String literal = this.readIdentifier();
-                    final String type = Keywords.lookupIdentifier(literal);
-                    tok = new TokenType(type, literal);
+                    tok = new TokenType(Keywords.lookupIdentifier(literal), literal);
                     return tok;
                 } else if (isDigit(this.ch)) {
-                    final String literal = this.readNumber();
-                    tok = new TokenType(INT, literal);
+                    tok = new TokenType(INT, this.readNumber());
                     return tok;
                 } else {
                     tok = new TokenType(ILLEGAL, this.ch + "");
@@ -77,6 +75,7 @@ public class Lexer {
         };
 
         this.readChar();
+        
         return tok;
     }
 
