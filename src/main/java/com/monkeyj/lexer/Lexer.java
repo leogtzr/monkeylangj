@@ -1,5 +1,6 @@
 package com.monkeyj.lexer;
 
+import com.monkeyj.token.Keywords;
 import com.monkeyj.token.TokenConstants;
 import com.monkeyj.token.TokenType;
 
@@ -23,25 +24,93 @@ public class Lexer {
         } else {
             this.ch = this.input.charAt(this.readPosition);
         }
+        this.position = this.readPosition;
         this.readPosition++;
     }
 
     public TokenType nextToken() {
-        final var tok = switch (this.ch) {
-            case '=' -> new TokenType(ASSIGN, this.ch + "");
-            case ';' -> new TokenType(SEMICOLON, this.ch + "");
-            case '(' -> new TokenType(LPAREN, this.ch + "");
-            case ')' -> new TokenType(RPAREN, this.ch + "");
-            case ',' -> new TokenType(COMMA, this.ch + "");
-            case '+' -> new TokenType(PLUS, this.ch + "");
-            case '{' -> new TokenType(LBRACE, this.ch + "");
-            case '}' -> new TokenType(RBRACE, this.ch + "");
-            case Character.MIN_VALUE -> new TokenType(EOF, "");
-            default -> throw new IllegalArgumentException(String.format("Not expected -> [%s]", this.ch));
+        this.skipWhitespaces();
+
+        TokenType tok;
+
+        switch (this.ch) {
+            case '=':
+                tok = new TokenType(ASSIGN, this.ch + "");
+                break;
+            case ';':
+                tok = new TokenType(SEMICOLON, this.ch + "");
+                break;
+            case '(':
+                tok = new TokenType(LPAREN, this.ch + "");
+                break;
+            case ')':
+                tok = new TokenType(RPAREN, this.ch + "");
+                break;
+            case ',':
+                tok = new TokenType(COMMA, this.ch + "");
+                break;
+            case '+':
+                tok = new TokenType(PLUS, this.ch + "");
+                break;
+            case '{':
+                tok = new TokenType(LBRACE, this.ch + "");
+                break;
+            case '}':
+                tok = new TokenType(RBRACE, this.ch + "");
+                break;
+            case Character.MIN_VALUE:
+                tok = new TokenType(EOF, "");
+                break;
+            default:
+                if (isLetter(this.ch)) {
+                    final String literal = this.readIdentifier();
+                    final String type = Keywords.lookupIdentifier(literal);
+                    tok = new TokenType(type, literal);
+                    return tok;
+                } else if (isDigit(this.ch)) {
+                    final String literal = this.readNumber();
+                    tok = new TokenType(INT, literal);
+                    return tok;
+                } else {
+                    tok = new TokenType(ILLEGAL, this.ch + "");
+                }
         };
 
         this.readChar();
         return tok;
+    }
+
+    private String readNumber() {
+        final int pos = this.position;
+        while (this.isDigit(this.ch)) {
+            this.readChar();
+        }
+
+        return this.input.substring(pos, this.position);
+    }
+
+    private boolean isDigit(final char ch) {
+        return '0' <= ch && ch <= '9';
+    }
+
+    private String readIdentifier() {
+        final int pos = this.position;
+        while (this.isLetter(this.ch)) {
+            this.readChar();
+        }
+
+        final String ident = this.input.substring(pos, this.position);
+        return ident;
+    }
+
+    private void skipWhitespaces() {
+        while (this.ch == ' ' || this.ch == '\t' || this.ch == '\n' || this.ch == '\r') {
+            this.readChar();
+        }
+    }
+
+    private boolean isLetter(final char ch) {
+        return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_';
     }
 
 }
