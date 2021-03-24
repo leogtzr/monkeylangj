@@ -24,5 +24,18 @@ public class TokenConstants {
     public static final String RBRACE = "}";
     public static final String FUNCTION = "FUNCTION";
     public static final String LET      = "LET";
+    public static final String TRUE = "TRUE";
+    public static final String FALSE = "FALSE";
+    public static final String IF = "IF";
+    public static final String ELSE = "ELSE";
+    public static final String RETURN = "RETURN";
+
+    // Operators
+    public static final String MINUS = "-";
+    public static final String BANG = "!";
+    public static final String ASTERISK = "*";
+    public static final String SLASH = "/";
+    public static final String LT = "<";
+    public static final String GT = ">";
 
 }

@@ -1,4 +1,3 @@
 package com.monkeyj.token;
 
-public record TokenType(String type, String literal) {
-}
+public record TokenType(String type, String literal) { }

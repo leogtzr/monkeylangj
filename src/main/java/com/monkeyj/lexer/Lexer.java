@@ -1,7 +1,6 @@
 package com.monkeyj.lexer;
 
 import com.monkeyj.token.Keywords;
-import com.monkeyj.token.TokenConstants;
 import com.monkeyj.token.TokenType;
 
 import static com.monkeyj.token.TokenConstants.*;
@@ -52,11 +51,29 @@ public class Lexer {
             case '+':
                 tok = new TokenType(PLUS, this.ch + "");
                 break;
+            case '-':
+                tok = new TokenType(MINUS, this.ch + "");
+                break;
             case '{':
                 tok = new TokenType(LBRACE, this.ch + "");
                 break;
             case '}':
                 tok = new TokenType(RBRACE, this.ch + "");
+                break;
+            case '!':
+                tok = new TokenType(BANG, this.ch + "");
+                break;
+            case '/':
+                tok = new TokenType(SLASH, this.ch + "");
+                break;
+            case '*':
+                tok = new TokenType(ASTERISK, this.ch + "");
+                break;
+            case '<':
+                tok = new TokenType(LT, this.ch + "");
+                break;
+            case '>':
+                tok = new TokenType(GT, this.ch + "");
                 break;
             case Character.MIN_VALUE:
                 tok = new TokenType(EOF, "");
@@ -75,7 +92,7 @@ public class Lexer {
         };
 
         this.readChar();
-        
+
         return tok;
     }
 

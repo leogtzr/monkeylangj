@@ -8,7 +8,12 @@ public class Keywords {
 
     public static final Map<String, String> KEYWORDS = Map.of(
         "fn", TokenConstants.FUNCTION,
-        "let", TokenConstants.LET
+        "let", TokenConstants.LET,
+        "true", TokenConstants.TRUE,
+        "false", TokenConstants.FALSE,
+        "if", TokenConstants.IF,
+        "else", TokenConstants.ELSE,
+        "return", TokenConstants.RETURN
     );
 
     public static String lookupIdentifier(final String ident) {
