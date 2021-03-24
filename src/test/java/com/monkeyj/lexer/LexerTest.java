@@ -156,6 +156,18 @@ let result = add(five, ten);
                 new test(RPAREN, ")"),
                 new test(SEMICOLON, ";"),
                 new test(BANG, "!"),
+                new test(MINUS, "-"),
+                new test(SLASH, "/"),
+                new test(ASTERISK, "*"),
+                new test(INT, "5"),
+                new test(SEMICOLON, ";"),
+                new test(INT, "5"),
+                new test(LT, "<"),
+                new test(INT, "10"),
+                new test(GT, ">"),
+                new test(INT, "5"),
+                new test(SEMICOLON, ";"),
+
                 new test(EOF, ""),
         };
 
