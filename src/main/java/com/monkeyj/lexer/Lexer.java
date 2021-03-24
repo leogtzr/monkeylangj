@@ -27,6 +27,14 @@ public class Lexer {
         this.readPosition++;
     }
 
+    private char peekChar() {
+        if (this.readPosition >= this.input.length()) {
+            return 0;
+        } else {
+            return this.input.charAt(this.readPosition);
+        }
+    }
+
     public TokenType nextToken() {
         this.skipWhitespaces();
 
@@ -34,7 +42,13 @@ public class Lexer {
 
         switch (this.ch) {
             case '=':
-                tok = new TokenType(ASSIGN, this.ch + "");
+                if (this.peekChar() == '=') {
+                    final var current = this.ch;
+                    this.readChar();
+                    tok = new TokenType(EQ, this.ch + "" + current);
+                } else {
+                    tok = new TokenType(ASSIGN, this.ch + "");
+                }
                 break;
             case ';':
                 tok = new TokenType(SEMICOLON, this.ch + "");
@@ -61,7 +75,13 @@ public class Lexer {
                 tok = new TokenType(RBRACE, this.ch + "");
                 break;
             case '!':
-                tok = new TokenType(BANG, this.ch + "");
+                if (this.peekChar() == '=') {
+                    final var current = this.ch;
+                    this.readChar();
+                    tok = new TokenType(NOT_EQ, current + "" + this.ch);
+                } else {
+                     tok = new TokenType(BANG, this.ch + "");
+                }
                 break;
             case '/':
                 tok = new TokenType(SLASH, this.ch + "");

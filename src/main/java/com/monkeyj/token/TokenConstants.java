@@ -14,6 +14,8 @@ public class TokenConstants {
     // Operators.
     public static final String ASSIGN = "=";
     public static final String PLUS   = "+";
+    public static final String EQ = "==";
+    public static final String NOT_EQ = "!=";
 
     // Delimiters.
     public static final String COMMA     = ",";
