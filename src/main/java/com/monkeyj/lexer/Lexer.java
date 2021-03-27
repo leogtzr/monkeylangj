@@ -1,7 +1,7 @@
 package com.monkeyj.lexer;
 
 import com.monkeyj.token.Keywords;
-import com.monkeyj.token.TokenType;
+import com.monkeyj.token.Token;
 
 import static com.monkeyj.token.TokenConstants.*;
 
@@ -35,79 +35,79 @@ public class Lexer {
         }
     }
 
-    public TokenType nextToken() {
+    public Token nextToken() {
         this.skipWhitespaces();
 
-        TokenType tok;
+        Token tok;
 
         switch (this.ch) {
             case '=':
                 if (this.peekChar() == '=') {
                     final var current = this.ch;
                     this.readChar();
-                    tok = new TokenType(EQ, this.ch + "" + current);
+                    tok = new Token(EQ, this.ch + "" + current);
                 } else {
-                    tok = new TokenType(ASSIGN, this.ch + "");
+                    tok = new Token(ASSIGN, this.ch + "");
                 }
                 break;
             case ';':
-                tok = new TokenType(SEMICOLON, this.ch + "");
+                tok = new Token(SEMICOLON, this.ch + "");
                 break;
             case '(':
-                tok = new TokenType(LPAREN, this.ch + "");
+                tok = new Token(LPAREN, this.ch + "");
                 break;
             case ')':
-                tok = new TokenType(RPAREN, this.ch + "");
+                tok = new Token(RPAREN, this.ch + "");
                 break;
             case ',':
-                tok = new TokenType(COMMA, this.ch + "");
+                tok = new Token(COMMA, this.ch + "");
                 break;
             case '+':
-                tok = new TokenType(PLUS, this.ch + "");
+                tok = new Token(PLUS, this.ch + "");
                 break;
             case '-':
-                tok = new TokenType(MINUS, this.ch + "");
+                tok = new Token(MINUS, this.ch + "");
                 break;
             case '{':
-                tok = new TokenType(LBRACE, this.ch + "");
+                tok = new Token(LBRACE, this.ch + "");
                 break;
             case '}':
-                tok = new TokenType(RBRACE, this.ch + "");
+                tok = new Token(RBRACE, this.ch + "");
                 break;
             case '!':
                 if (this.peekChar() == '=') {
                     final var current = this.ch;
                     this.readChar();
-                    tok = new TokenType(NOT_EQ, current + "" + this.ch);
+                    tok = new Token(NOT_EQ, current + "" + this.ch);
                 } else {
-                     tok = new TokenType(BANG, this.ch + "");
+                     tok = new Token(BANG, this.ch + "");
                 }
                 break;
             case '/':
-                tok = new TokenType(SLASH, this.ch + "");
+                tok = new Token(SLASH, this.ch + "");
                 break;
             case '*':
-                tok = new TokenType(ASTERISK, this.ch + "");
+                tok = new Token(ASTERISK, this.ch + "");
                 break;
             case '<':
-                tok = new TokenType(LT, this.ch + "");
+                tok = new Token(LT, this.ch + "");
                 break;
             case '>':
-                tok = new TokenType(GT, this.ch + "");
+                tok = new Token(GT, this.ch + "");
                 break;
             case Character.MIN_VALUE:
-                tok = new TokenType(EOF, "");
+                tok = new Token(EOF, "");
                 break;
             default:
                 if (isLetter(this.ch)) {
                     final String literal = this.readIdentifier();
-                    tok = new TokenType(Keywords.lookupIdentifier(literal), literal);
+                    tok = new Token(Keywords.lookupIdentifier(literal), literal);
                     return tok;
                 } else if (isDigit(this.ch)) {
-                    tok = new TokenType(INT, this.readNumber());
+                    tok = new Token(INT, this.readNumber());
                     return tok;
                 } else {
-                    tok = new TokenType(ILLEGAL, this.ch + "");
+                    tok = new Token(ILLEGAL, this.ch + "");
                 }
         };
 
