@@ -7,7 +7,7 @@ import static com.monkeyj.token.TokenConstants.*;
 
 public class Lexer {
 
-    private String input;
+    private final String input;
     private int position;               // current position in input (points to the current char).
     private int readPosition;           // current reading position in input (after current char).
     private char ch;                    // current char under examination.
@@ -109,7 +109,7 @@ public class Lexer {
                 } else {
                     tok = new Token(ILLEGAL, this.ch + "");
                 }
-        };
+        }
 
         this.readChar();
 
@@ -135,8 +135,7 @@ public class Lexer {
             this.readChar();
         }
 
-        final String ident = this.input.substring(pos, this.position);
-        return ident;
+        return this.input.substring(pos, this.position);
     }
 
     private void skipWhitespaces() {

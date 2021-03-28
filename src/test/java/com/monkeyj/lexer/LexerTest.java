@@ -1,6 +1,5 @@
 package com.monkeyj.lexer;
 
-import com.monkeyj.token.TokenConstants;
 import org.junit.jupiter.api.Test;
 
 import static com.monkeyj.token.TokenConstants.*;

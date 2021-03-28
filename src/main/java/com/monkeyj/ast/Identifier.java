@@ -57,4 +57,12 @@ public class Identifier implements Expression, Node {
     public int hashCode() {
         return Objects.hash(token, value);
     }
+
+    @Override
+    public String toString() {
+        return "Identifier{" +
+                "token=" + token +
+                ", value='" + value + '\'' +
+                '}';
+    }
 }

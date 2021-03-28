@@ -1,5 +1,6 @@
 package com.monkeyj.ast;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -8,16 +9,16 @@ public class Program {
 
     private List<Statement> statements;
 
-    public Program(final List<Statement> statements) {
-        this.statements = statements;
+    public Program() {
+        this.statements = new ArrayList<>();
     }
 
     public List<Statement> getStatements() {
         return Collections.unmodifiableList(this.statements);
     }
 
-    public void setStatements(List<Statement> statements) {
-        this.statements = statements;
+    public void addStatement(final Statement stmt) {
+        this.statements.add(stmt);
     }
 
     // TODO: check if Program needs to extend from "Node"
