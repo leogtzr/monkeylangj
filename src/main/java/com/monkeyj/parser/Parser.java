@@ -56,9 +56,7 @@ public class Parser {
             return null;
         }
 
-        final Identifier identifier = new Identifier();
-        identifier.setToken(this.curToken);
-        identifier.setValue(this.curToken.literal());
+        final Identifier identifier = new Identifier(this.curToken, this.curToken.literal());
         letStmt.setName(identifier);
 
         if (!this.expectPeek(TokenConstants.ASSIGN)) {
