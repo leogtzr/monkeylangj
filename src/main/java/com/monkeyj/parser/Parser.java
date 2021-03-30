@@ -1,20 +1,23 @@
 package com.monkeyj.parser;
 
-import com.monkeyj.ast.Identifier;
-import com.monkeyj.ast.LetStatement;
-import com.monkeyj.ast.Program;
-import com.monkeyj.ast.Statement;
+import com.monkeyj.ast.*;
 import com.monkeyj.lexer.Lexer;
 import com.monkeyj.token.Token;
 import com.monkeyj.token.TokenConstants;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class Parser {
-    private Lexer lexer;
+    private final Lexer lexer;
     private Token curToken;
     private Token peekToken;
+    private final List<String> errors;
 
     public Parser(final Lexer lexer) {
         this.lexer = lexer;
+        this.errors = new ArrayList<>();
 
         this.nextToken();
         this.nextToken();
@@ -43,9 +46,25 @@ public class Parser {
         switch (this.curToken.type()) {
             case TokenConstants.LET:
                 return this.parseLetStatement();
+            case TokenConstants.RETURN:
+                return this.parseReturnStatement();
             default:
                 return null;
         }
+    }
+
+    private ReturnStatement parseReturnStatement() {
+        final var returnStmt = new ReturnStatement();
+        returnStmt.setToken(this.curToken);
+
+        this.nextToken();
+
+        // TODO: We're skipping the expression until we encounter a semicolon.
+        while (!this.curTokenIs(TokenConstants.SEMICOLON)) {
+            this.nextToken();
+        }
+
+        return returnStmt;
     }
 
     private LetStatement parseLetStatement() {
@@ -76,6 +95,7 @@ public class Parser {
             this.nextToken();
             return true;
         }
+        this.peekError(tokenType);
         return false;
     }
 
@@ -87,5 +107,14 @@ public class Parser {
         return this.curToken.type().equals(tokenType);
     }
 
+    public List<String> errors() {
+        return Collections.unmodifiableList(this.errors);
+    }
+
+    private void peekError(final String tokenType) {
+        final var msg = String.format("expected next token to be %s, got %s instead",
+                tokenType, this.peekToken.type());
+        this.errors.add(msg);
+    }
 
 }
