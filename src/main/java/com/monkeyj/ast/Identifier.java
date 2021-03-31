@@ -60,9 +60,6 @@ public class Identifier implements Expression, Node {
 
     @Override
     public String toString() {
-        return "Identifier{" +
-                "token=" + token +
-                ", value='" + value + '\'' +
-                '}';
+        return this.value;
     }
 }

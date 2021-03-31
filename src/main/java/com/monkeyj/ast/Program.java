@@ -48,8 +48,10 @@ public class Program {
 
     @Override
     public String toString() {
-        return "Program{" +
-                "statements=" + statements +
-                '}';
+        final StringBuilder out = new StringBuilder();
+
+        this.statements.forEach(out::append);
+
+        return out.toString();
     }
 }

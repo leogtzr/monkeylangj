@@ -63,10 +63,18 @@ public class LetStatement implements Statement {
 
     @Override
     public String toString() {
-        return "LetStatement{" +
-                "token=" + token +
-                ", name=" + name +
-                ", value=" + value +
-                '}';
+        final StringBuilder out = new StringBuilder();
+
+        out.append(this.tokenLiteral()).append(" ");
+        out.append(this.getName().toString());
+        out.append(" = ");
+
+        if (this.value != null) {
+            out.append(this.value.toString());
+        }
+
+        out.append(";");
+
+        return out.toString();
     }
 }

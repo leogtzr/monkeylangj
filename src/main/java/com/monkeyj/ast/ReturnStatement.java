@@ -32,9 +32,16 @@ public class ReturnStatement implements Statement {
 
     @Override
     public String toString() {
-        return "ReturnStatement{" +
-                "token=" + token +
-                ", returnValue=" + returnValue +
-                '}';
+        final StringBuilder out = new StringBuilder();
+
+        out.append(this.tokenLiteral()).append(" ");
+
+        if (this.returnValue != null) {
+            out.append(this.returnValue.toString());
+        }
+
+        out.append(";");
+
+        return out.toString();
     }
 }
