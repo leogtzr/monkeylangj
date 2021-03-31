@@ -16,9 +16,7 @@ public class LetStatement implements Statement {
     }
 
     @Override
-    public void statementNode() {
-
-    }
+    public void statementNode() { }
 
     public Token getToken() {
         return token;

@@ -2,24 +2,36 @@ package com.monkeyj.ast;
 
 import com.monkeyj.lexer.Lexer;
 import com.monkeyj.parser.Parser;
+import com.monkeyj.token.Token;
+import com.monkeyj.token.TokenConstants;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AstTest {
 
     @Test
     public void testString() {
-        final String INPUT = "let myVar = anotherVar;";
-        final var lex = new Lexer(INPUT);
-        final Parser parser = new Parser(lex);
+        final LetStatement letStmt = new LetStatement();
+        letStmt.setToken(new Token(TokenConstants.LET, "let"));
 
-        final var program = parser.parseProgram();
-        if (program == null) {
-            fail("Program.parseProgram() returned null.");
-        }
+        final Identifier identifier = new Identifier();
+        identifier.setToken(new Token(TokenConstants.IDENT, "myVar"));
+        identifier.setValue("myVar");
 
-        System.out.println(program.toString());
+        letStmt.setName(identifier);
+
+        final Identifier identifierExpression = new Identifier();
+        identifierExpression.setToken(new Token(TokenConstants.IDENT, "anotherVar"));
+        identifierExpression.setValue("anotherVar");
+
+        letStmt.setValue(identifierExpression);
+
+        final var program = new Program(List.of(letStmt));
+
+        assertEquals("let myVar = anotherVar;", program.toString());
     }
 
 }

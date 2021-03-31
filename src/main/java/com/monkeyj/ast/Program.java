@@ -13,6 +13,10 @@ public class Program {
         this.statements = new ArrayList<>();
     }
 
+    public Program(final List<Statement> statements) {
+        this.statements = statements;
+    }
+
     public List<Statement> getStatements() {
         return Collections.unmodifiableList(this.statements);
     }
