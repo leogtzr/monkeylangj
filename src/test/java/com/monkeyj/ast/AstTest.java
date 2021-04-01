@@ -1,7 +1,5 @@
 package com.monkeyj.ast;
 
-import com.monkeyj.lexer.Lexer;
-import com.monkeyj.parser.Parser;
 import com.monkeyj.token.Token;
 import com.monkeyj.token.TokenConstants;
 import org.junit.jupiter.api.Test;

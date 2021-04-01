@@ -1,8 +1,6 @@
 package com.monkeyj.parser;
 
-import com.monkeyj.ast.LetStatement;
-import com.monkeyj.ast.ReturnStatement;
-import com.monkeyj.ast.Statement;
+import com.monkeyj.ast.*;
 import com.monkeyj.lexer.Lexer;
 import org.junit.jupiter.api.Test;
 
@@ -187,6 +185,34 @@ return 993322;
             assertTrue("return".equals(stmt.tokenLiteral()), String.format("returnStmt.TokenLiteral not 'return', got %s", stmt.tokenLiteral()));
         }
 
+    }
+
+    @Test
+    public void shouldParseIdentifierExpression() {
+        final String INPUT = "foobar;";
+
+        final int EXPECTED_NUMBER_LET_STATEMENTS = 1;
+
+        final var lex = new Lexer(INPUT);
+        final Parser parser = new Parser(lex);
+
+        final var program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        assertEquals(
+                EXPECTED_NUMBER_LET_STATEMENTS, program.getStatements().size()
+                , String.format("program.Stmts does not contain %d statements, got=[%d]"
+                        , EXPECTED_NUMBER_LET_STATEMENTS, program.getStatements().size()));
+
+        assertTrue(program.getStatements().get(0) instanceof ExpressionStatement
+                , "program.statement[0] is not ast.ExpressionStatement");
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+
+        assertTrue(stmt.getExpression() instanceof Identifier, "exp not ast.Identifier");
+
+        final Identifier ident = (Identifier) stmt.getExpression();
+        assertEquals("foobar", ident.getValue());
+        assertEquals("foobar", ident.tokenLiteral());
     }
 
 }

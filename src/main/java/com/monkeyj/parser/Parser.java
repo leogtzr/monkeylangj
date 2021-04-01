@@ -5,22 +5,37 @@ import com.monkeyj.lexer.Lexer;
 import com.monkeyj.token.Token;
 import com.monkeyj.token.TokenConstants;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class Parser {
     private final Lexer lexer;
+    private final List<String> errors;
     private Token curToken;
     private Token peekToken;
-    private final List<String> errors;
+    private Map<String, Supplier<Expression>> prefixParseFns;
+    private Map<String, Function<Expression, Expression>> infixParseFns;
 
     public Parser(final Lexer lexer) {
         this.lexer = lexer;
         this.errors = new ArrayList<>();
+        this.prefixParseFns = new HashMap<>();
+        this.infixParseFns = new HashMap<>();
+
+        // this.prefixParseFns.put(TokenConstants.IDENT, () -> this.parseIdentifier());
+        this.registerPrefix(TokenConstants.IDENT, () -> this.parseIdentifier());
 
         this.nextToken();
         this.nextToken();
+    }
+
+    private void registerPrefix(final String tokenType, final Supplier<Expression> fn) {
+        this.prefixParseFns.put(tokenType, fn);
+    }
+
+    private void registerInfix(final String tokenType, final Function<Expression, Expression> fn) {
+        this.infixParseFns.put(tokenType, fn);
     }
 
     public void nextToken() {
@@ -49,8 +64,43 @@ public class Parser {
             case TokenConstants.RETURN:
                 return this.parseReturnStatement();
             default:
-                return null;
+                return this.parseExpressionStatement();
         }
+    }
+
+    private ExpressionStatement parseExpressionStatement() {
+        final var stmt = new ExpressionStatement();
+        stmt.setToken(this.curToken);
+
+        final Expression expression = this.parseExpression(Precedence.LOWEST);
+        stmt.setExpression(expression);
+
+        if (this.peekTokenIs(TokenConstants.SEMICOLON)) {
+            this.nextToken();
+        }
+
+        return stmt;
+    }
+
+    private Expression parseIdentifier() {
+        final var identifier = new Identifier();
+
+        identifier.setToken(this.curToken);
+        identifier.setValue(this.curToken.literal());
+
+        return identifier;
+    }
+
+    private Expression parseExpression(final int precedence) {
+        final var currentToken = this.curToken;
+        final var prefix = this.prefixParseFns.get(currentToken.type());
+        if (prefix == null) {
+            return null;
+        }
+
+        final Expression leftExpression = prefix.get();
+
+        return leftExpression;
     }
 
     private ReturnStatement parseReturnStatement() {
