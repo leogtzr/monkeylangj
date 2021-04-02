@@ -243,4 +243,58 @@ return 993322;
         assertEquals("5", literal.tokenLiteral());
     }
 
+    @Test
+    public void shouldParsePrefixExpressions() {
+        record prefixTest(String input, String operator, Integer integerValue) {}
+        final prefixTest[] prefixTests = {
+                new prefixTest("!5;", "!", 5),
+                new prefixTest("-15;", "-", 15)
+        };
+
+        for (final prefixTest test : prefixTests) {
+            final var lex = new Lexer(test.input());
+            final Parser parser = new Parser(lex);
+
+            final var program = parser.parseProgram();
+            checkParserErrors(parser);
+
+            assertEquals(
+                    1, program.getStatements().size()
+                    , String.format("program.Stmts does not contain %d statements, got=[%d]", 1, program.getStatements().size()));
+
+            assertTrue(program.getStatements().get(0) instanceof ExpressionStatement
+                    , "program.statement[0] is not ast.ExpressionStatement");
+            final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+
+            assertTrue(stmt.getExpression() instanceof PrefixExpression, "exp not ast.PrefixExpression");
+
+            final PrefixExpression exp = (PrefixExpression) stmt.getExpression();
+            assertEquals(test.operator(), exp.getOperator());
+
+            if (!testIntegerLiteral(exp.getRight(), test.integerValue())) {
+                // TODO: finish this.
+            }
+        }
+    }
+
+    private static boolean testIntegerLiteral(final Expression il, final Integer value) {
+        if (!(il instanceof IntegerLiteral)) {
+            System.err.println("il not ast.IntegerLiteral");
+            return false;
+        }
+
+        final IntegerLiteral integ = (IntegerLiteral) il;
+
+        if (integ.getValue() != value) {
+            System.err.printf("integ.Value not %d. got=%d", value, integ.getValue());
+            return false;
+        }
+        if (!integ.tokenLiteral().equals(String.format("%d", value))) {
+            System.err.printf("integ.TokenLiteral not %d. got=%s", value, integ.tokenLiteral());
+            return false;
+        }
+        return true;
+    }
+
+
 }

@@ -26,6 +26,8 @@ public class Parser {
         // this.prefixParseFns.put(TokenConstants.IDENT, () -> this.parseIdentifier());
         this.registerPrefix(TokenConstants.IDENT, () -> this.parseIdentifier());
         this.registerPrefix(TokenConstants.INT, () -> this.parseIntegerLiteral());
+        this.registerPrefix(TokenConstants.BANG, () -> this.parsePrefixExpression());
+        this.registerPrefix(TokenConstants.MINUS, () -> this.parsePrefixExpression());
 
         this.nextToken();
         this.nextToken();
@@ -105,10 +107,22 @@ public class Parser {
         return literal;
     }
 
+    private Expression parsePrefixExpression() {
+        final var expression = new PrefixExpression();
+        expression.setToken(this.curToken);
+        expression.setOperator(this.curToken.literal());
+
+        this.nextToken();
+        expression.setRight(this.parseExpression(Precedence.PREFIX));
+
+        return expression;
+    }
+
     private Expression parseExpression(final int precedence) {
         final var currentToken = this.curToken;
         final var prefix = this.prefixParseFns.get(currentToken.type());
         if (prefix == null) {
+            this.noPrefixParseFnError(currentToken.type());
             return null;
         }
 
@@ -180,5 +194,12 @@ public class Parser {
                 tokenType, this.peekToken.type());
         this.errors.add(msg);
     }
+
+    private void noPrefixParseFnError(final String tokenType) {
+        final var msg = String.format("no prefix parse function for %s found",tokenType);
+        this.errors.add(msg);
+    }
+
+
 
 }
