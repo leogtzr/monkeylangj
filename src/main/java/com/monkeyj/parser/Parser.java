@@ -25,6 +25,7 @@ public class Parser {
 
         // this.prefixParseFns.put(TokenConstants.IDENT, () -> this.parseIdentifier());
         this.registerPrefix(TokenConstants.IDENT, () -> this.parseIdentifier());
+        this.registerPrefix(TokenConstants.INT, () -> this.parseIntegerLiteral());
 
         this.nextToken();
         this.nextToken();
@@ -89,6 +90,19 @@ public class Parser {
         identifier.setValue(this.curToken.literal());
 
         return identifier;
+    }
+
+    private Expression parseIntegerLiteral() {
+        final var literal = new IntegerLiteral();
+        literal.setToken(this.curToken);
+
+        try {
+            literal.setValue(Integer.parseInt(this.curToken.literal()));
+        } catch (final NumberFormatException ignored) {
+            return null;
+        }
+
+        return literal;
     }
 
     private Expression parseExpression(final int precedence) {

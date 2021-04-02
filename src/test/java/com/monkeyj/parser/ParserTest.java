@@ -215,4 +215,32 @@ return 993322;
         assertEquals("foobar", ident.tokenLiteral());
     }
 
+    @Test
+    public void shouldValidateIntegerLiteralExpression() {
+        final String INPUT = "5;";
+
+        final int EXPECTED_NUMBER_LET_STATEMENTS = 1;
+
+        final var lex = new Lexer(INPUT);
+        final Parser parser = new Parser(lex);
+
+        final var program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        assertEquals(
+                EXPECTED_NUMBER_LET_STATEMENTS, program.getStatements().size()
+                , String.format("program.Stmts does not contain %d statements, got=[%d]"
+                        , EXPECTED_NUMBER_LET_STATEMENTS, program.getStatements().size()));
+
+        assertTrue(program.getStatements().get(0) instanceof ExpressionStatement
+                , "program.statement[0] is not ast.ExpressionStatement");
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+
+        assertTrue(stmt.getExpression() instanceof IntegerLiteral, "exp not ast.IntegerLiteral");
+
+        final IntegerLiteral literal = (IntegerLiteral) stmt.getExpression();
+        assertEquals(5, literal.getValue());
+        assertEquals("5", literal.tokenLiteral());
+    }
+
 }
