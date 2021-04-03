@@ -273,6 +273,7 @@ return 993322;
 
             if (!testIntegerLiteral(exp.getRight(), test.integerValue())) {
                 // TODO: finish this.
+                fail();
             }
         }
     }
@@ -296,5 +297,80 @@ return 993322;
         return true;
     }
 
+    @Test
+    public void shouldParseInfixExpressions() {
+        record infixTest(String input, int leftValue, String operator, int rightValue) {}
+
+        final infixTest[] tests = {
+            new infixTest("5 + 5;", 5, "+", 5),
+            new infixTest("5 - 5;", 5, "-", 5),
+            new infixTest("5 * 5;", 5, "*", 5),
+            new infixTest("5 / 5;", 5, "/", 5),
+            new infixTest("5 > 5;", 5, ">", 5),
+            new infixTest("5 < 5;", 5, "<", 5),
+            new infixTest("5 == 5;", 5, "==", 5),
+            new infixTest("5 != 5;", 5, "!=", 5),
+        };
+
+        for (final infixTest test : tests) {
+            final var lex = new Lexer(test.input());
+            final Parser parser = new Parser(lex);
+            final var program = parser.parseProgram();
+            checkParserErrors(parser);
+
+            assertEquals(
+                    1, program.getStatements().size()
+                    , String.format("program.Stmts does not contain %d statements, got=[%d]", 1, program.getStatements().size()));
+
+            assertTrue(program.getStatements().get(0) instanceof ExpressionStatement
+                    , "program.statement[0] is not ast.ExpressionStatement");
+            final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+
+            assertTrue(stmt.getExpression() instanceof InfixExpression, "exp not ast.PrefixExpression");
+
+            final InfixExpression exp = (InfixExpression) stmt.getExpression();
+
+            if (!testIntegerLiteral(exp.getLeft(), test.leftValue())) {
+                fail();
+            }
+
+            assertEquals(test.operator(), exp.getOperator());
+
+            if (!testIntegerLiteral(exp.getRight(), test.rightValue)) {
+                fail();
+            }
+        }
+    }
+
+    @Test
+    public void shouldValidatePrecedenceString() {
+        record test(String input, String expected) {}
+
+        final test[] tests = {
+            new test("!-a", "(!(-a))"),
+            new test("a + b + c", "((a + b) + c)"),
+            new test("!-a", "(!(-a))"),
+            new test("a + b + c", "((a + b) + c)"),
+            new test("a + b - c", "((a + b) - c)"),
+            new test("a * b * c", "((a * b) * c)"),
+            new test("a * b / c", "((a * b) / c)"),
+            new test("a + b / c", "(a + (b / c))"),
+            new test("a + b * c + d / e - f", "(((a + (b * c)) + (d / e)) - f)"),
+            new test("3 + 4; -5 * 5", "(3 + 4)((-5) * 5)"),
+            new test("5 > 4 == 3 < 4", "((5 > 4) == (3 < 4))"),
+            new test("5 < 4 != 3 > 4", "((5 < 4) != (3 > 4))"),
+            new test("3 + 4 * 5 == 3 * 1 + 4 * 5", "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))"),
+            new test("3 + 4 * 5 == 3 * 1 + 4 * 5", "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))")
+        };
+
+        for (final test test : tests) {
+            final var lex = new Lexer(test.input());
+            final Parser parser = new Parser(lex);
+            final var program = parser.parseProgram();
+            checkParserErrors(parser);
+
+            assertEquals(test.expected(), program.toString());
+        }
+    }
 
 }

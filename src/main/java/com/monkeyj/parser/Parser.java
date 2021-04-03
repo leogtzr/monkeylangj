@@ -17,6 +17,17 @@ public class Parser {
     private Map<String, Supplier<Expression>> prefixParseFns;
     private Map<String, Function<Expression, Expression>> infixParseFns;
 
+    private static final Map<String, Integer> PRECEDENCES = Map.of(
+        TokenConstants.EQ, Precedence.EQUALS,
+        TokenConstants.NOT_EQ, Precedence.EQUALS,
+        TokenConstants.LT, Precedence.LESS_GREATER,
+        TokenConstants.GT, Precedence.LESS_GREATER,
+        TokenConstants.PLUS, Precedence.SUM,
+        TokenConstants.MINUS, Precedence.SUM,
+        TokenConstants.SLASH, Precedence.PRODUCT,
+        TokenConstants.ASTERISK, Precedence.PRODUCT
+    );
+
     public Parser(final Lexer lexer) {
         this.lexer = lexer;
         this.errors = new ArrayList<>();
@@ -29,8 +40,31 @@ public class Parser {
         this.registerPrefix(TokenConstants.BANG, () -> this.parsePrefixExpression());
         this.registerPrefix(TokenConstants.MINUS, () -> this.parsePrefixExpression());
 
+        this.registerInfix(TokenConstants.PLUS, ex -> this.parseInfixExpression(ex));
+        this.registerInfix(TokenConstants.MINUS, ex -> this.parseInfixExpression(ex));
+        this.registerInfix(TokenConstants.SLASH, ex -> this.parseInfixExpression(ex));
+        this.registerInfix(TokenConstants.ASTERISK, ex -> this.parseInfixExpression(ex));
+        this.registerInfix(TokenConstants.EQ, ex -> this.parseInfixExpression(ex));
+        this.registerInfix(TokenConstants.NOT_EQ, ex -> this.parseInfixExpression(ex));
+        this.registerInfix(TokenConstants.LT, ex -> this.parseInfixExpression(ex));
+        this.registerInfix(TokenConstants.GT, ex -> this.parseInfixExpression(ex));
+
         this.nextToken();
         this.nextToken();
+    }
+
+    private Expression parseInfixExpression(final Expression left) {
+        final var expression = new InfixExpression();
+        expression.setToken(this.curToken);
+        expression.setOperator(this.curToken.literal());
+        expression.setLeft(left);
+
+        final int precedence = this.curPrecedence();
+
+        this.nextToken();
+        expression.setRight(this.parseExpression(precedence));
+
+        return expression;
     }
 
     private void registerPrefix(final String tokenType, final Supplier<Expression> fn) {
@@ -126,7 +160,19 @@ public class Parser {
             return null;
         }
 
-        final Expression leftExpression = prefix.get();
+        Expression leftExpression = prefix.get();
+
+        // the loop:
+        while (!this.peekTokenIs(TokenConstants.SEMICOLON) && (precedence < this.peekPrecedence())) {
+            final var infix = this.infixParseFns.get(this.peekToken.type());
+            if (infix == null) {
+                return leftExpression;
+            }
+
+            this.nextToken();
+
+            leftExpression = infix.apply(leftExpression);
+        }
 
         return leftExpression;
     }
@@ -200,6 +246,12 @@ public class Parser {
         this.errors.add(msg);
     }
 
+    private int peekPrecedence() {
+        return PRECEDENCES.getOrDefault(this.peekToken.type(), Precedence.LOWEST);
+    }
 
+    private int curPrecedence() {
+        return PRECEDENCES.getOrDefault(this.curToken.type(), Precedence.LOWEST);
+    }
 
 }
