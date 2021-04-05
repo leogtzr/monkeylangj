@@ -343,7 +343,6 @@ return 993322;
             final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
             assertTrue(stmt.getExpression() instanceof InfixExpression, "exp not ast.PrefixExpression");
 
-            // TODO: fix this ...
             final InfixExpression exp = (InfixExpression) stmt.getExpression();
 
             if (!testIntegerLiteral(exp.getLeft(), test.leftValue())) {
@@ -377,7 +376,7 @@ return 993322;
                 new infixTest("5 != 5;", 5, "!=", 5),
                 new infixTest("true == true", true, "==", true),
                 new infixTest("true != false", true, "!=", false),
-                new infixTest("false == true", false, "==", true)
+                new infixTest("false == false", Boolean.FALSE, "==", Boolean.FALSE)
         };
 
         for (final infixTest test : tests) {
@@ -398,23 +397,6 @@ return 993322;
             if (!testInfixExpression(stmt, test.leftValue(), test.operator(), test.rightValue())) {
                 fail();
             }
-
-//            // TODO: fix this ...
-//            final InfixExpression exp = (InfixExpression) stmt.getExpression();
-//
-//            if (!testIntegerLiteral(exp.getLeft(), (Integer) test.leftValue())) {
-//                fail();
-//            }
-//
-//            assertEquals(test.operator(), exp.getOperator());
-//
-//            if (!testIntegerLiteral(exp.getRight(), test.rightValue)) {
-//                fail();
-//            }
-//
-//            if (!testInfixExpression(stmt, test.leftValue(), test.operator(), test.rightValue())) {
-//                fail();
-//            }
         }
     }
 
@@ -465,9 +447,18 @@ return 993322;
         }
 
         final InfixExpression infix = (InfixExpression) exp.getExpression();
-        // TODO: ...
+        if (!testLiteralExpression(infix.getLeft(), leftValue)) {
+            return false;
+        }
 
-        System.out.println("alv");
+        if (!infix.getOperator().equals(operator)) {
+            System.err.printf("exp.Operator is not '%s', got=%s\n", operator, infix.getOperator());
+            return false;
+        }
+
+        if (!testLiteralExpression(infix.getRight(), rightValue)) {
+            return false;
+        }
 
         return true;
     }
@@ -498,7 +489,7 @@ return 993322;
         }
 
         final Identifier ident = (Identifier) exp;
-        if (ident.getValue() != value) {
+        if (!ident.getValue().equals(value)) {
             System.err.printf("integ.Value not %d. got=%d", value, ident.getValue());
             return false;
         }
