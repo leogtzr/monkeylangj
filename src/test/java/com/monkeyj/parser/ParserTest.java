@@ -535,4 +535,34 @@ return 993322;
         return true;
     }
 
+    @Test
+    public void shouldParseBooleanExpressions() {
+        record test(String input, boolean expectedBoolean) {}
+        final test[] tests = {
+            new test("true;", true),
+            new test("false;", false)
+        };
+
+        for (final test test : tests) {
+            final var lex = new Lexer(test.input());
+            final Parser parser = new Parser(lex);
+            final var program = parser.parseProgram();
+            checkParserErrors(parser);
+
+            assertEquals(
+                    1, program.getStatements().size()
+                    , String.format("program.Stmts does not contain %d statements, got=[%d]", 1, program.getStatements().size()));
+
+            assertTrue(program.getStatements().get(0) instanceof ExpressionStatement
+                    , "program.statement[0] is not ast.ExpressionStatement");
+            final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+
+            assertTrue(stmt.getExpression() instanceof Bool, "program.statement[0] is not ast.Bool");
+
+            final Bool b = (Bool) stmt.getExpression();
+            assertEquals(test.expectedBoolean(), b.getValue());
+        }
+    }
+
+
 }
