@@ -182,7 +182,7 @@ return 993322;
 
         for (final Statement stmt : program.getStatements()) {
             assertTrue(stmt instanceof ReturnStatement, String.format("stmt not *ast.ReturnStatement. got=%s", stmt.toString()));
-            assertTrue("return".equals(stmt.tokenLiteral()), String.format("returnStmt.TokenLiteral not 'return', got %s", stmt.tokenLiteral()));
+            assertEquals("return", stmt.tokenLiteral(), String.format("returnStmt.TokenLiteral not 'return', got %s", stmt.tokenLiteral()));
         }
 
     }
@@ -490,12 +490,12 @@ return 993322;
 
         final Identifier ident = (Identifier) exp;
         if (!ident.getValue().equals(value)) {
-            System.err.printf("integ.Value not %d. got=%d", value, ident.getValue());
+            System.err.printf("integ.Value not %s. got=%s", value, ident.getValue());
             return false;
         }
 
         if (!ident.tokenLiteral().equals(String.format("%d", value))) {
-            System.err.printf("integ.TokenLiteral not %d. got=%s", value, ident.tokenLiteral());
+            System.err.printf("integ.TokenLiteral not %s. got=%s", value, ident.tokenLiteral());
             return false;
         }
 
