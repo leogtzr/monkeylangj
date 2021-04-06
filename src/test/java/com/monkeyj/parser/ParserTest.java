@@ -422,7 +422,12 @@ return 993322;
             new test("true","true"),
             new test("false", "false"),
             new test("3 > 5 == false", "((3 > 5) == false)"),
-            new test("3 < 5 == true", "((3 < 5) == true)")
+            new test("3 < 5 == true", "((3 < 5) == true)"),
+            new test("1 + (2 + 3) + 4", "((1 + (2 + 3)) + 4)"),
+            new test("(5 + 5) * 2", "((5 + 5) * 2)"),
+            new test("2 / (5 + 5)", "(2 / (5 + 5))"),
+            new test("-(5 + 5)", "(-(5 + 5))"),
+            new test("!(true == true)", "(!(true == true))")
         };
 
         for (final test test : tests) {
