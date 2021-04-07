@@ -43,6 +43,7 @@ public class Parser {
         this.registerPrefix(TokenConstants.FALSE, () -> this.parseBoolean());
 
         this.registerPrefix(TokenConstants.LPAREN, () -> this.parseGroupExpression());
+        this.registerPrefix(TokenConstants.IF, () -> this.parseIfExpression());
 
         this.registerInfix(TokenConstants.PLUS, ex -> this.parseInfixExpression(ex));
         this.registerInfix(TokenConstants.MINUS, ex -> this.parseInfixExpression(ex));
@@ -55,6 +56,55 @@ public class Parser {
 
         this.nextToken();
         this.nextToken();
+    }
+
+    private Expression parseIfExpression() {
+        final var expr = new IfExpression();
+        expr.setToken(this.curToken);
+
+        if (!this.expectPeek(TokenConstants.LPAREN)) {
+            return null;
+        }
+
+        this.nextToken();
+        expr.setCondition(this.parseExpression(Precedence.LOWEST));
+
+        if (!this.expectPeek(TokenConstants.RPAREN)) {
+            return null;
+        }
+
+        if (!this.expectPeek(TokenConstants.LBRACE)) {
+            return null;
+        }
+
+        expr.setConsequence(this.parseBlockStatement());
+
+        if (this.peekTokenIs(TokenConstants.ELSE)) {
+            this.nextToken();
+
+            if (!this.expectPeek(TokenConstants.LBRACE)) {
+                return null;
+            }
+
+            expr.setAlternative(this.parseBlockStatement());
+        }
+
+        return expr;
+    }
+
+    private BlockStatement parseBlockStatement() {
+        final var block = new BlockStatement();
+        this.nextToken();
+
+        while (!this.curTokenIs(TokenConstants.RBRACE) && !this.curTokenIs(TokenConstants.EOF)) {
+            final var stmt = this.parseStatement();
+            if (stmt != null) {
+                block.addStatement(stmt);
+            }
+            this.nextToken();
+        }
+
+        return block;
     }
 
     private Expression parseGroupExpression() {

@@ -355,7 +355,7 @@ return 993322;
                 fail();
             }
 
-            if (!testInfixExpression(stmt, test.leftValue(), test.operator(), test.rightValue())) {
+            if (!testInfixExpression(stmt.getExpression(), test.leftValue(), test.operator(), test.rightValue())) {
                 fail();
             }
         }
@@ -394,7 +394,7 @@ return 993322;
             final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
             assertTrue(stmt.getExpression() instanceof InfixExpression, "exp not ast.PrefixExpression");
 
-            if (!testInfixExpression(stmt, test.leftValue(), test.operator(), test.rightValue())) {
+            if (!testInfixExpression(stmt.getExpression(), test.leftValue(), test.operator(), test.rightValue())) {
                 fail();
             }
         }
@@ -441,17 +441,17 @@ return 993322;
     }
 
     private static boolean testInfixExpression(
-            final ExpressionStatement exp
+            final Expression exp
             , final Object leftValue
             , final String operator
             , final Object rightValue) {
 
-        if (!(exp.getExpression() instanceof InfixExpression)) {
+        if (!(exp instanceof InfixExpression)) {
             System.err.println("exp is not InfixExpression");
             return false;
         }
 
-        final InfixExpression infix = (InfixExpression) exp.getExpression();
+        final InfixExpression infix = (InfixExpression) exp;
         if (!testLiteralExpression(infix.getLeft(), leftValue)) {
             return false;
         }
@@ -499,7 +499,7 @@ return 993322;
             return false;
         }
 
-        if (!ident.tokenLiteral().equals(String.format("%d", value))) {
+        if (!ident.tokenLiteral().equals(value)) {
             System.err.printf("integ.TokenLiteral not %s. got=%s", value, ident.tokenLiteral());
             return false;
         }
@@ -569,5 +569,43 @@ return 993322;
         }
     }
 
+    @Test
+    public void shouldParseIfExpressions() {
+        final String INPUT = "if (x < y) { x }";
+
+        final var lex = new Lexer(INPUT);
+        final Parser parser = new Parser(lex);
+        final var program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        assertEquals(
+            1, program.getStatements().size()
+            , String.format("program.Stmts does not contain %d statements, got=[%d]", 1, program.getStatements().size()));
+
+        assertTrue(program.getStatements().get(0) instanceof ExpressionStatement
+                , "program.statement[0] is not ast.ExpressionStatement");
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+
+        assertTrue(stmt.getExpression() instanceof IfExpression, "program.statement[0] is not ast.IfExpression");
+
+        final var exp = (IfExpression) stmt.getExpression();
+
+        if (!testInfixExpression(exp.getCondition(), "x", "<", "y")) {
+            return;
+        }
+
+        assertEquals(
+            1, exp.getConsequence().getStatements().size()
+            , String.format("consequence is not 1 statements. got=%d\n", 1, exp.getConsequence().getStatements().size()));
+
+        assertTrue(exp.getConsequence().getStatements().get(0) instanceof ExpressionStatement
+                , "exp.conseq.stmt[0] is not ExpressionStatement");
+        final ExpressionStatement consequence = (ExpressionStatement) exp.getConsequence().getStatements().get(0);
+
+        if (!testIdentifier(consequence.getExpression(), "x")) {
+            return;
+        }
+        assertTrue(exp.getAlternative() == null);
+    }
 
 }
