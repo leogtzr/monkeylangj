@@ -608,4 +608,55 @@ return 993322;
         assertTrue(exp.getAlternative() == null);
     }
 
+    @Test
+    public void shouldParseIfElseExpressions() {
+        final String INPUT = "if (x < y) { x } else { y }";
+
+        final var lex = new Lexer(INPUT);
+        final Parser parser = new Parser(lex);
+        final var program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        assertEquals(
+                1, program.getStatements().size()
+                , String.format("program.Stmts does not contain %d statements, got=[%d]", 1, program.getStatements().size()));
+
+        assertTrue(program.getStatements().get(0) instanceof ExpressionStatement
+                , "program.statement[0] is not ast.ExpressionStatement");
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+
+        assertTrue(stmt.getExpression() instanceof IfExpression, "program.statement[0] is not ast.IfExpression");
+
+        final var exp = (IfExpression) stmt.getExpression();
+
+        if (!testInfixExpression(exp.getCondition(), "x", "<", "y")) {
+            return;
+        }
+
+        assertEquals(
+            1, exp.getConsequence().getStatements().size()
+            , String.format("consequence is not 1 statements. got=%d\n", 1, exp.getConsequence().getStatements().size()));
+
+        assertTrue(exp.getConsequence().getStatements().get(0) instanceof ExpressionStatement
+                , "exp.conseq.stmt[0] is not ExpressionStatement");
+        final ExpressionStatement consequence = (ExpressionStatement) exp.getConsequence().getStatements().get(0);
+
+        if (!testIdentifier(consequence.getExpression(), "x")) {
+            return;
+        }
+
+        assertEquals(
+            1, exp.getAlternative().getStatements().size()
+            , String.format("alternative.stmt is not 1 statements. got=%d\n", 1, exp.getAlternative().getStatements().size()));
+
+        assertTrue(exp.getAlternative().getStatements().get(0) instanceof ExpressionStatement
+                , "exp.conseq.stmt[0] is not ExpressionStatement");
+        final ExpressionStatement alternative = (ExpressionStatement) exp.getAlternative().getStatements().get(0);
+
+        if (!testIdentifier(alternative.getExpression(), "y")) {
+            return;
+        }
+
+    }
+
 }
