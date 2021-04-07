@@ -656,7 +656,84 @@ return 993322;
         if (!testIdentifier(alternative.getExpression(), "y")) {
             return;
         }
+    }
 
+    @Test
+    public void shouldParseFunctionLiterals() {
+        final String INPUT = "fn(x, y) { x + y; }";
+
+        final var lex = new Lexer(INPUT);
+        final Parser parser = new Parser(lex);
+        final var program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        assertEquals(
+            1, program.getStatements().size()
+            , String.format("program.Stmts does not contain %d statements, got=[%d]", 1, program.getStatements().size()));
+
+        assertTrue(program.getStatements().get(0) instanceof ExpressionStatement
+                , "program.statement[0] is not ast.ExpressionStatement");
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+
+        assertTrue(stmt.getExpression() instanceof FunctionLiteral
+                , "program.statement[0] is not ast.FunctionLiteral");
+
+        final FunctionLiteral function = (FunctionLiteral) stmt.getExpression();
+        assertEquals(
+            2
+            , function.getParameters().size()
+            , String.format("function literal parameters wrong. want 2, got=%d", function.getParameters().size()));
+
+        if (!testLiteralExpression(function.getParameters().get(0), "x")) {
+            fail();
+        }
+        if (!testLiteralExpression(function.getParameters().get(0), "x")) {
+            fail();
+        }
+
+        assertEquals(
+            1, function.getBody().getStatements().size()
+            , String.format("function.Body.Statements has not 1 statements. got=%d", 1, function.getBody().getStatements().size()));
+
+        assertTrue(function.getBody().getStatements().get(0) instanceof ExpressionStatement);
+
+        final ExpressionStatement bodyStmt = (ExpressionStatement) function.getBody().getStatements().get(0);
+        if (!testInfixExpression(bodyStmt.getExpression(), "x", "+", "y")) {
+            fail();
+        }
+    }
+
+    @Test
+    private void shouldParseFunctionParameters() {
+        record test(String input, List<String> expectedParams) {}
+
+        final test[] tests = {
+                new test("fn() {};", List.of()),
+                new test("fn(x) {};", List.of("x")),
+                new test("fn(x, y, z) {};", List.of("x", "y", "z"))
+        };
+
+        for (final test test : tests) {
+            final var lex = new Lexer(test.input());
+            final Parser parser = new Parser(lex);
+            final var program = parser.parseProgram();
+            checkParserErrors(parser);
+
+            final var stmt = (ExpressionStatement) program.getStatements().get(0);
+            final var function = (FunctionLiteral) stmt.getExpression();
+
+            assertEquals(
+                    test.expectedParams.size()
+                    , function.getParameters().size()
+                    , String.format("length parameters wrong. want %d, got=%d", test.expectedParams.size(), function.getParameters().size()));
+
+            for (int i = 0; i < test.expectedParams.size(); i++) {
+                final String ident = test.expectedParams().get(i);
+                if (!testLiteralExpression(function.getParameters().get(i), ident)) {
+                    fail();
+                }
+            }
+        }
     }
 
 }

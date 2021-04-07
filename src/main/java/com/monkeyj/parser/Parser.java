@@ -44,6 +44,7 @@ public class Parser {
 
         this.registerPrefix(TokenConstants.LPAREN, () -> this.parseGroupExpression());
         this.registerPrefix(TokenConstants.IF, () -> this.parseIfExpression());
+        this.registerPrefix(TokenConstants.FUNCTION, () -> this.parseFunctionLiteral());
 
         this.registerInfix(TokenConstants.PLUS, ex -> this.parseInfixExpression(ex));
         this.registerInfix(TokenConstants.MINUS, ex -> this.parseInfixExpression(ex));
@@ -56,6 +57,58 @@ public class Parser {
 
         this.nextToken();
         this.nextToken();
+    }
+
+    private Expression parseFunctionLiteral() {
+        final var lit = new FunctionLiteral();
+
+        if (!this.expectPeek(TokenConstants.LPAREN)) {
+            return null;
+        }
+
+        lit.setParameters(this.parseFunctionParameters());
+
+        if (!this.expectPeek(TokenConstants.LBRACE)) {
+            return null;
+        }
+
+        lit.setBody(this.parseBlockStatement());
+
+        return lit;
+    }
+
+    private List<Identifier> parseFunctionParameters() {
+        final List<Identifier> identifiers = new ArrayList<>();
+
+        if (this.peekTokenIs(TokenConstants.RPAREN)) {
+            this.nextToken();
+            return identifiers;
+        }
+
+        this.nextToken();
+
+        final Identifier identifier = new Identifier();
+        identifier.setToken(this.curToken);
+        identifier.setValue(this.curToken.literal());
+
+        identifiers.add(identifier);
+
+        while (this.peekTokenIs(TokenConstants.COMMA)) {
+            this.nextToken();
+            this.nextToken();
+
+            final Identifier ident = new Identifier();
+            ident.setToken(this.curToken);
+            ident.setValue(this.curToken.literal());
+
+            identifiers.add(ident);
+        }
+
+        if (!this.expectPeek(TokenConstants.RPAREN)) {
+            return null;
+        }
+
+        return identifiers;
     }
 
     private Expression parseIfExpression() {
