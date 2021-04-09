@@ -347,10 +347,16 @@ public class Parser {
 
         this.nextToken();
 
-        // TODO: We're skipping the expression until we encounter a semicolon.
-        while (!this.curTokenIs(TokenConstants.SEMICOLON)) {
+        returnStmt.setReturnValue(this.parseExpression(Precedence.LOWEST));
+
+        if (this.peekTokenIs(TokenConstants.SEMICOLON)) {
             this.nextToken();
         }
+
+        // TODO: We're skipping the expression until we encounter a semicolon.
+//        while (!this.curTokenIs(TokenConstants.SEMICOLON)) {
+//            this.nextToken();
+//        }
 
         return returnStmt;
     }
@@ -371,7 +377,15 @@ public class Parser {
         }
 
         // TODO: We're skipping the expression until we encounter a semicolon.
-        while (!this.curTokenIs(TokenConstants.SEMICOLON)) {
+//        while (!this.curTokenIs(TokenConstants.SEMICOLON)) {
+//            this.nextToken();
+//        }
+
+        this.nextToken();
+
+        letStmt.setValue(this.parseExpression(Precedence.LOWEST));
+
+        if (this.peekTokenIs(TokenConstants.SEMICOLON)) {
             this.nextToken();
         }
 

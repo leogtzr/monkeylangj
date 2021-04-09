@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ParserTest {
 
     @Test
-    void shouldParseLetStatements() {
+    public void shouldParseLetStatements() {
         final String INPUT = """
 let x = 5;
 let y = 10;
@@ -62,7 +62,7 @@ let foobar = 838383;
     }
 
     @Test
-    void shouldParseLetStatements2() {
+    public void shouldParseLetStatements2() {
         final String INPUT = """
 let x = 5;
 let y = 10;
@@ -136,7 +136,43 @@ let foobar = 838383;
                 fail("error parsing let stmt");
             }
         }
+    }
 
+    @Test
+    public void shouldParseLetStatements4() {
+        record test(String input, String expectedIdentifier, Object expectedValue) {}
+
+        final test[] tests = {
+            new test("let x = 5;", "x", 5),
+            new test("let y = true;", "y", true),
+            new test("let foobar = y;", "foobar", "y")
+        };
+
+        final int EXPECTED_NUMBER_LET_STATEMENTS = 1;
+
+        for (final test test : tests) {
+            final var lex = new Lexer(test.input());
+            final Parser parser = new Parser(lex);
+            final var program = parser.parseProgram();
+            checkParserErrors(parser);
+
+            assertEquals(
+                    EXPECTED_NUMBER_LET_STATEMENTS, program.getStatements().size()
+                    , String.format("program.Stmts does not contain %d statements, got=[%d]"
+                            , EXPECTED_NUMBER_LET_STATEMENTS, program.getStatements().size()));
+
+            final var stmt = program.getStatements().get(0);
+            if (!testLetStatement(stmt, test.expectedIdentifier)) {
+                 fail();
+            }
+
+            assertTrue(stmt instanceof LetStatement, "program.statement[0] is not ast.LetStatement");
+            final var val = ((LetStatement) stmt).getValue();
+
+            if (!testLiteralExpression(val, test.expectedValue)) {
+                fail();
+            }
+        }
     }
 
     private void checkParserErrors(final Parser parser) {
@@ -184,7 +220,49 @@ return 993322;
             assertTrue(stmt instanceof ReturnStatement, String.format("stmt not *ast.ReturnStatement. got=%s", stmt.toString()));
             assertEquals("return", stmt.tokenLiteral(), String.format("returnStmt.TokenLiteral not 'return', got %s", stmt.tokenLiteral()));
         }
+    }
 
+    /*
+    func TestReturnStatements(t *testing.T) {
+		if testLiteralExpression(t, returnStmt.ReturnValue, tt.expectedValue) {
+			return
+		}
+	}
+}
+     */
+    @Test
+    public void shouldParseReturnStatement2() {
+        record test(String input, Object expectedValue) {}
+
+        final test[] tests = {
+            new test("return 5;", 5),
+            new test("return true;", true),
+            new test("return foobar;", "foobar")
+        };
+
+        final int EXPECTED_NUMBER_RETURN_STATEMENTS = 1;
+
+        for (final test test : tests) {
+            final var lex = new Lexer(test.input());
+            final Parser parser = new Parser(lex);
+            final var program = parser.parseProgram();
+            checkParserErrors(parser);
+
+            assertEquals(
+                    EXPECTED_NUMBER_RETURN_STATEMENTS, program.getStatements().size()
+                    , String.format("program.Stmts does not contain %d statements, got=[%d]"
+                            , EXPECTED_NUMBER_RETURN_STATEMENTS, program.getStatements().size()));
+
+            final var stmt = program.getStatements().get(0);
+            assertTrue(stmt instanceof ReturnStatement, "program.statement[0] is not ast.ReturnStatement");
+
+            final var returnStmt = (ReturnStatement) stmt;
+            assertEquals("return", returnStmt.tokenLiteral());
+
+            if (!testLiteralExpression(returnStmt.getReturnValue(), test.expectedValue)) {
+                fail();
+            }
+        }
     }
 
     @Test
