@@ -25,7 +25,8 @@ public class Parser {
         TokenConstants.PLUS, Precedence.SUM,
         TokenConstants.MINUS, Precedence.SUM,
         TokenConstants.SLASH, Precedence.PRODUCT,
-        TokenConstants.ASTERISK, Precedence.PRODUCT
+        TokenConstants.ASTERISK, Precedence.PRODUCT,
+        TokenConstants.LPAREN, Precedence.CALL
     );
 
     public Parser(final Lexer lexer) {
@@ -46,6 +47,8 @@ public class Parser {
         this.registerPrefix(TokenConstants.IF, () -> this.parseIfExpression());
         this.registerPrefix(TokenConstants.FUNCTION, () -> this.parseFunctionLiteral());
 
+        this.registerInfix(TokenConstants.LPAREN, (exp) -> this.parseCallExpression(exp));
+
         this.registerInfix(TokenConstants.PLUS, ex -> this.parseInfixExpression(ex));
         this.registerInfix(TokenConstants.MINUS, ex -> this.parseInfixExpression(ex));
         this.registerInfix(TokenConstants.SLASH, ex -> this.parseInfixExpression(ex));
@@ -57,6 +60,41 @@ public class Parser {
 
         this.nextToken();
         this.nextToken();
+    }
+
+    private Expression parseCallExpression(final Expression function) {
+        final var exp = new CallExpression();
+        exp.setToken(this.curToken);
+        exp.setFunction(function);
+        
+        final List<Expression> arguments = this.parseCallArguments();
+        exp.setArguments(arguments);
+        
+        return exp;
+    }
+
+    private List<Expression> parseCallArguments() {
+        final List<Expression> args = new ArrayList<>();
+
+        if (this.peekTokenIs(TokenConstants.RPAREN)) {
+            this.nextToken();
+            return args;
+        }
+
+        this.nextToken();
+        args.add(this.parseExpression(Precedence.LOWEST));
+
+        while (this.peekTokenIs(TokenConstants.COMMA)) {
+            this.nextToken();
+            this.nextToken();
+            args.add(this.parseExpression(Precedence.LOWEST));
+        }
+
+        if (!this.expectPeek(TokenConstants.RPAREN)) {
+            return null;
+        }
+
+        return args;
     }
 
     private Expression parseFunctionLiteral() {

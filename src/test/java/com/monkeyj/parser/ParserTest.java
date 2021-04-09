@@ -427,7 +427,10 @@ return 993322;
             new test("(5 + 5) * 2", "((5 + 5) * 2)"),
             new test("2 / (5 + 5)", "(2 / (5 + 5))"),
             new test("-(5 + 5)", "(-(5 + 5))"),
-            new test("!(true == true)", "(!(true == true))")
+            new test("!(true == true)", "(!(true == true))"),
+            new test("a + add(b * c) + d", "((a + add((b * c))) + d)"),
+            new test("add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))", "add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))"),
+            new test("add(a + b + c * d / f + g)", "add((((a + b) + ((c * d) / f)) + g))")
         };
 
         for (final test test : tests) {
@@ -704,13 +707,13 @@ return 993322;
     }
 
     @Test
-    private void shouldParseFunctionParameters() {
+    public void shouldParseFunctionParameters() {
         record test(String input, List<String> expectedParams) {}
 
         final test[] tests = {
-                new test("fn() {};", List.of()),
-                new test("fn(x) {};", List.of("x")),
-                new test("fn(x, y, z) {};", List.of("x", "y", "z"))
+            new test("fn() {};", List.of()),
+            new test("fn(x) {};", List.of("x")),
+            new test("fn(x, y, z) {};", List.of("x", "y", "z"))
         };
 
         for (final test test : tests) {
@@ -733,6 +736,47 @@ return 993322;
                     fail();
                 }
             }
+        }
+    }
+
+    @Test
+    public void shouldParseCallExpression() {
+        final String INPUT = "add(1, 2 * 3, 4 + 5);";
+
+        final var lex = new Lexer(INPUT);
+        final Parser parser = new Parser(lex);
+        final var program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        assertEquals(
+            1, program.getStatements().size()
+            , String.format("program.Stmts does not contain %d statements, got=[%d]", 1, program.getStatements().size()));
+
+        assertTrue(program.getStatements().get(0) instanceof ExpressionStatement
+                , "program.statement[0] is not ast.ExpressionStatement");
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+
+        assertTrue(stmt.getExpression() instanceof CallExpression
+                , "program.statement[0] is not ast.CallExpression");
+
+        final CallExpression exp = (CallExpression) stmt.getExpression();
+        if (!testIdentifier(exp.getFunction(), "add")) {
+            fail();
+        }
+
+        final int numberOfFunctionArgs = exp.getArguments().size();
+        assertEquals(3, numberOfFunctionArgs, String.format("wrong length of arguments. got=%d", numberOfFunctionArgs));
+
+        if (!testLiteralExpression(exp.getArguments().get(0), 1)) {
+            fail();
+        }
+
+        if (!testInfixExpression(exp.getArguments().get(1), 2, "*", 3)) {
+            fail();
+        }
+
+        if (!testInfixExpression(exp.getArguments().get(2), 4, "+", 5)) {
+            fail();
         }
     }
 
