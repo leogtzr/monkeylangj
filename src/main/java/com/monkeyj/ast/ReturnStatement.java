@@ -3,6 +3,7 @@ package com.monkeyj.ast;
 import com.monkeyj.token.Token;
 
 public class ReturnStatement implements Statement {
+
     private Token token;
     private Expression returnValue;
 
