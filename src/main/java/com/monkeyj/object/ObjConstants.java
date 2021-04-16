@@ -1,0 +1,10 @@
+package com.monkeyj.object;
+
+public final class ObjConstants {
+
+    private ObjConstants() {}
+
+    public static final String INTEGER_OBJ = "INTEGER";
+    public static final String BOOLEAN_OBJ = "BOOLEAN";
+
+}
