@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class Program {
+public class Program implements Node {
 
     private List<Statement> statements;
 
@@ -25,7 +25,7 @@ public class Program {
         this.statements.add(stmt);
     }
 
-    // TODO: check if Program needs to extend from "Node"
+    @Override
     public String tokenLiteral() {
         if (!this.statements.isEmpty()) {
             return this.statements.get(0).tokenLiteral();
