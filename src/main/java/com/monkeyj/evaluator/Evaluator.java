@@ -25,11 +25,16 @@ public final class Evaluator {
             return intObj;
         } else if (node instanceof com.monkeyj.ast.Bool) {
             final com.monkeyj.ast.Bool boolLiteral = (com.monkeyj.ast.Bool) node;
-            final var boolObj = new com.monkeyj.object.Bool(boolLiteral.getValue());
-            return boolObj;
+//            final var boolObj = new com.monkeyj.object.Bool(boolLiteral.getValue());
+//            return boolObj;
+            return nativeBoolToBooleanObject(boolLiteral.getValue());
         }
 
         return null;
+    }
+
+    private static com.monkeyj.object.Bool nativeBoolToBooleanObject(final boolean input) {
+        return input ? Literals.TRUE : Literals.FALSE;
     }
 
     private static Obj evalStatements(final List<Statement> stmts) {
