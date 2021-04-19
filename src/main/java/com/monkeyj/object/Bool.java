@@ -12,7 +12,7 @@ public class Bool implements Obj {
 
     public Bool() {}
 
-    public boolean isValue() {
+    public boolean getValue() {
         return value;
     }
 

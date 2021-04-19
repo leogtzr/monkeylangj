@@ -23,6 +23,10 @@ public final class Evaluator {
             intObj.setValue(literal.getValue());
 
             return intObj;
+        } else if (node instanceof com.monkeyj.ast.Bool) {
+            final com.monkeyj.ast.Bool boolLiteral = (com.monkeyj.ast.Bool) node;
+            final var boolObj = new com.monkeyj.object.Bool(boolLiteral.getValue());
+            return boolObj;
         }
 
         return null;
