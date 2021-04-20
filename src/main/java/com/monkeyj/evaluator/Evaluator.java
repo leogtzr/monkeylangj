@@ -43,6 +43,31 @@ public final class Evaluator {
         }
     }
 
+    private static Obj evalIntegerInfixExpression(final String operator, final Obj left, final Obj right) {
+        final var leftVal = ((Int) left).getValue();
+        final var rightVal = ((Int) right).getValue();
+
+        switch (operator) {
+            case "+":
+                return new Int(leftVal + rightVal);
+            case "-":
+                return new Int(leftVal - rightVal);
+            case "*":
+                return new Int(leftVal * rightVal);
+            case "/":
+                return new Int(leftVal / rightVal);
+            default:
+                return Literals.NULL;
+        }
+    }
+
+    private static Obj evalInfixExpression(final String operator, final Obj left, final Obj right) {
+        if (left.type().equals(ObjConstants.INTEGER_OBJ) && right.type().equals(ObjConstants.INTEGER_OBJ)) {
+            return evalIntegerInfixExpression(operator, left, right);
+        }
+        return Literals.NULL;
+    }
+
     public static Obj eval(final Node node) {
         if (node instanceof Program) {
             final var program = (Program) node;
@@ -66,6 +91,11 @@ public final class Evaluator {
             // final var prefixNode =
             final var right = eval(prefix.getRight());
             return evalPrefixExpression(prefix.getOperator(), right);
+        } else if (node instanceof InfixExpression) {
+            final var infix = (InfixExpression) node;
+            final var left = Evaluator.eval(infix.getLeft());
+            final var right = Evaluator.eval(infix.getRight());
+            return evalInfixExpression(infix.getOperator(), left, right);
         }
 
         return null;
