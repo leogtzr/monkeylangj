@@ -87,4 +87,27 @@ public class EvaluatorTest {
             }
         }
     }
+
+    @Test
+    public void shouldEvaluateBangOperator() {
+        record test(String input, boolean expected) {}
+
+        final test[] tests = {
+            new test("!true", false),
+            new test("!false", true),
+            new test("!5", false),
+            new test("!!true", true),
+            new test("!!false", false),
+            new test("!!5", true),
+        };
+
+        for (final test test : tests) {
+            final var evaluated = testEval(test.input());
+            if (!isValidBooleanObject(evaluated, test.expected())) {
+                fail();
+            }
+        }
+
+    }
+
 }
