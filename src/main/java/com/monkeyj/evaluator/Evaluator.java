@@ -3,6 +3,7 @@ package com.monkeyj.evaluator;
 import com.monkeyj.ast.*;
 import com.monkeyj.object.Int;
 import com.monkeyj.object.Obj;
+import com.monkeyj.object.ObjConstants;
 
 import java.util.List;
 
@@ -18,13 +19,25 @@ public final class Evaluator {
         } else if (right.equals(Literals.NULL)) {
             return Literals.TRUE;
         }
+
         return Literals.FALSE;
+    }
+
+    private static Obj evalMinusPrefixOperatorExpression(final Obj right) {
+        if (!right.type().equals(ObjConstants.INTEGER_OBJ)) {
+            return Literals.NULL;
+        }
+
+        final var value = ((Int) right).getValue();
+        return new Int(-(value));
     }
 
     private static com.monkeyj.object.Obj evalPrefixExpression(final String operator, final com.monkeyj.object.Obj right) {
         switch (operator) {
             case "!":
                 return evalBangOperatorExpression(right);
+            case "-":
+                return evalMinusPrefixOperatorExpression(right);
             default:
                 return Literals.NULL;
         }

@@ -20,7 +20,9 @@ public class EvaluatorTest {
 
         final test[] tests = {
             new test("5", 5),
-            new test("10", 10)
+            new test("10", 10),
+            new test("-5", -5),
+            new test("-10", -10),
         };
 
         for (final test test : tests) {

@@ -32,7 +32,7 @@ public class Repl {
 
             final var evaluated = Evaluator.eval(program);
             if (evaluated != null) {
-                System.out.println(program.toString());
+                System.out.println(evaluated.inspect());
                 System.out.println();
             }
         }
