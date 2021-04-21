@@ -4,7 +4,7 @@ build:
 	mvn clean package
 
 run:
-	@java --enable-preview -jar target/monkeyj-jar-with-dependencies.jar
+	java --enable-preview -jar target/monkeyj-jar-with-dependencies.jar
 
 clean:
 	mvn clean

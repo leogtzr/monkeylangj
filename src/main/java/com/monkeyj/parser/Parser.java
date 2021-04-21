@@ -14,8 +14,8 @@ public class Parser {
     private final List<String> errors;
     private Token curToken;
     private Token peekToken;
-    private Map<String, Supplier<Expression>> prefixParseFns;
-    private Map<String, Function<Expression, Expression>> infixParseFns;
+    private final Map<String, Supplier<Expression>> prefixParseFns;
+    private final Map<String, Function<Expression, Expression>> infixParseFns;
 
     private static final Map<String, Integer> PRECEDENCES = Map.of(
         TokenConstants.EQ, Precedence.EQUALS,
@@ -36,27 +36,25 @@ public class Parser {
         this.infixParseFns = new HashMap<>();
 
         // this.prefixParseFns.put(TokenConstants.IDENT, () -> this.parseIdentifier());
-        this.registerPrefix(TokenConstants.IDENT, () -> this.parseIdentifier());
-        this.registerPrefix(TokenConstants.INT, () -> this.parseIntegerLiteral());
-        this.registerPrefix(TokenConstants.BANG, () -> this.parsePrefixExpression());
-        this.registerPrefix(TokenConstants.MINUS, () -> this.parsePrefixExpression());
-        this.registerPrefix(TokenConstants.TRUE, () -> this.parseBoolean());
-        this.registerPrefix(TokenConstants.FALSE, () -> this.parseBoolean());
+        this.registerPrefix(TokenConstants.IDENT, this::parseIdentifier);
+        this.registerPrefix(TokenConstants.INT, this::parseIntegerLiteral);
+        this.registerPrefix(TokenConstants.BANG, this::parsePrefixExpression);
+        this.registerPrefix(TokenConstants.MINUS, this::parsePrefixExpression);
+        this.registerPrefix(TokenConstants.TRUE, this::parseBoolean);
+        this.registerPrefix(TokenConstants.FALSE, this::parseBoolean);
+        this.registerPrefix(TokenConstants.LPAREN, this::parseGroupExpression);
+        this.registerPrefix(TokenConstants.IF, this::parseIfExpression);
+        this.registerPrefix(TokenConstants.FUNCTION, this::parseFunctionLiteral);
 
-        this.registerPrefix(TokenConstants.LPAREN, () -> this.parseGroupExpression());
-        this.registerPrefix(TokenConstants.IF, () -> this.parseIfExpression());
-        this.registerPrefix(TokenConstants.FUNCTION, () -> this.parseFunctionLiteral());
-
-        this.registerInfix(TokenConstants.LPAREN, (exp) -> this.parseCallExpression(exp));
-
-        this.registerInfix(TokenConstants.PLUS, ex -> this.parseInfixExpression(ex));
-        this.registerInfix(TokenConstants.MINUS, ex -> this.parseInfixExpression(ex));
-        this.registerInfix(TokenConstants.SLASH, ex -> this.parseInfixExpression(ex));
-        this.registerInfix(TokenConstants.ASTERISK, ex -> this.parseInfixExpression(ex));
-        this.registerInfix(TokenConstants.EQ, ex -> this.parseInfixExpression(ex));
-        this.registerInfix(TokenConstants.NOT_EQ, ex -> this.parseInfixExpression(ex));
-        this.registerInfix(TokenConstants.LT, ex -> this.parseInfixExpression(ex));
-        this.registerInfix(TokenConstants.GT, ex -> this.parseInfixExpression(ex));
+        this.registerInfix(TokenConstants.LPAREN, this::parseCallExpression);
+        this.registerInfix(TokenConstants.PLUS, this::parseInfixExpression);
+        this.registerInfix(TokenConstants.MINUS, this::parseInfixExpression);
+        this.registerInfix(TokenConstants.SLASH, this::parseInfixExpression);
+        this.registerInfix(TokenConstants.ASTERISK, this::parseInfixExpression);
+        this.registerInfix(TokenConstants.EQ, this::parseInfixExpression);
+        this.registerInfix(TokenConstants.NOT_EQ, this::parseInfixExpression);
+        this.registerInfix(TokenConstants.LT, this::parseInfixExpression);
+        this.registerInfix(TokenConstants.GT, this::parseInfixExpression);
 
         this.nextToken();
         this.nextToken();
@@ -259,14 +257,11 @@ public class Parser {
     }
 
     private Statement parseStatement() {
-        switch (this.curToken.type()) {
-            case TokenConstants.LET:
-                return this.parseLetStatement();
-            case TokenConstants.RETURN:
-                return this.parseReturnStatement();
-            default:
-                return this.parseExpressionStatement();
-        }
+        return switch (this.curToken.type()) {
+            case TokenConstants.LET -> this.parseLetStatement();
+            case TokenConstants.RETURN -> this.parseReturnStatement();
+            default -> this.parseExpressionStatement();
+        };
     }
 
     private ExpressionStatement parseExpressionStatement() {

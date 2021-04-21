@@ -8,8 +8,6 @@ import com.monkeyj.object.Obj;
 import com.monkeyj.parser.Parser;
 import org.junit.jupiter.api.Test;
 
-import static com.monkeyj.token.TokenConstants.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EvaluatorTest {
@@ -128,7 +126,6 @@ public class EvaluatorTest {
                 fail();
             }
         }
-
     }
 
 }
