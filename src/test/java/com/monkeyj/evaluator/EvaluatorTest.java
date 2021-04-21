@@ -90,7 +90,15 @@ public class EvaluatorTest {
 
         final test[] tests = {
             new test("true", true),
-            new test("false", false)
+            new test("false", false),
+            new test("1 < 2", true),
+            new test("1 > 2", false),
+            new test("1 < 1", false),
+            new test("1 > 1", false),
+            new test("1 == 1", true),
+            new test("1 != 1", false),
+            new test("1 == 2", false),
+            new test("1 != 2", true),
         };
 
         for (final test test : tests) {

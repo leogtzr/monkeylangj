@@ -56,6 +56,14 @@ public final class Evaluator {
                 return new Int(leftVal * rightVal);
             case "/":
                 return new Int(leftVal / rightVal);
+            case "<":
+                return nativeBoolToBooleanObject(leftVal < rightVal);
+            case ">":
+                return nativeBoolToBooleanObject(leftVal > rightVal);
+            case "==":
+                return nativeBoolToBooleanObject(leftVal == rightVal);
+            case "!=":
+                return nativeBoolToBooleanObject(leftVal != rightVal);
             default:
                 return Literals.NULL;
         }
