@@ -1,4 +1,4 @@
-# monkeylangj
+# monkey - Programming Language implementation in Java
 
 ## Donation / Sponsorship ❤️ 👍
 
