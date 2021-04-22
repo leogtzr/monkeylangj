@@ -128,4 +128,41 @@ public class EvaluatorTest {
         }
     }
 
+    private static boolean isValidNullObject(final Obj obj) {
+        if (!obj.equals(Literals.NULL)) {
+            System.err.println("obj is not NULL");
+            return false;
+        }
+
+        return true;
+    }
+
+    @Test
+    public void shouldEvaluateIfExpressions() {
+        record test(String input, Object expected) {}
+
+        final test[] tests = {
+            new test("if (true) { 10 }", 10),
+            new test("if (false) { 10 }", null),
+            new test("if (1) { 10 }", 10),
+            new test("if (1 < 2) { 10 }", 10),
+            new test("if (1 > 2) { 10 }", null),
+            new test("if (1 > 2) { 10 } else { 20 }", 20),
+            new test("if (1 < 2) { 10 } else { 20 }", 10),
+        };
+
+        for (final test test : tests) {
+            final var evaluated = testEval(test.input());
+            if (test.expected() instanceof Integer) {
+                if (!isValidIntegerObject(evaluated, (Integer)test.expected())) {
+                    fail();
+                }
+            } else {
+                if (!isValidNullObject(evaluated)) {
+                    fail();
+                }
+            }
+        }
+    }
+
 }

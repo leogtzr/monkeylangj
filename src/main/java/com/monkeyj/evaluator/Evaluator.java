@@ -83,9 +83,29 @@ public final class Evaluator {
             final var left = Evaluator.eval(infix.getLeft());
             final var right = Evaluator.eval(infix.getRight());
             return evalInfixExpression(infix.getOperator(), left, right);
+        } else if (node instanceof BlockStatement blockStmt) {
+            return evalStatements(blockStmt.getStatements());
+        } else if (node instanceof IfExpression ifExpression) {
+            return evalIfExpression(ifExpression);
         }
 
         return null;
+    }
+
+    private static Obj evalIfExpression(final IfExpression ifExpression) {
+        final var condition = eval(ifExpression.getCondition());
+
+        if (isTruthy(condition)) {
+            return eval(ifExpression.getConsequence());
+        } else if (ifExpression.getAlternative() != null) {
+            return eval(ifExpression.getAlternative());
+        } else {
+            return Literals.NULL;
+        }
+    }
+
+    private static boolean isTruthy(final Obj obj) {
+        return !obj.equals(Literals.NULL) && !obj.equals(Literals.FALSE);
     }
 
     private static com.monkeyj.object.Bool nativeBoolToBooleanObject(final boolean input) {
