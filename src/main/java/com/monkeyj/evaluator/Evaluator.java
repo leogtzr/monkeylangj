@@ -4,6 +4,7 @@ import com.monkeyj.ast.*;
 import com.monkeyj.object.Int;
 import com.monkeyj.object.Obj;
 import com.monkeyj.object.ObjConstants;
+import com.monkeyj.object.ReturnValue;
 
 import java.util.List;
 
@@ -87,6 +88,9 @@ public final class Evaluator {
             return evalStatements(blockStmt.getStatements());
         } else if (node instanceof IfExpression ifExpression) {
             return evalIfExpression(ifExpression);
+        } else if (node instanceof ReturnStatement returnStmt) {
+            final var val = eval(returnStmt.getReturnValue());
+            return new ReturnValue(val);
         }
 
         return null;
@@ -117,6 +121,10 @@ public final class Evaluator {
 
         for (final var stmt : statements) {
             result = eval(stmt);
+
+            if (result instanceof ReturnValue returnValue) {
+                return returnValue.getValue();
+            }
         }
 
         return result;

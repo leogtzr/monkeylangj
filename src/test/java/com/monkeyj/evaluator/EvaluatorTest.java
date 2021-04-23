@@ -165,4 +165,24 @@ public class EvaluatorTest {
         }
     }
 
+    @Test
+    public void shouldEvaluateReturnStatements() {
+        record test(String input, Integer expected) {}
+
+        final test[] tests = {
+            new test("return 10;", 10),
+            new test("return 10; 9;", 10),
+            new test("return 2 * 5; 9;", 10),
+            new test("9; return 2 * 5; 9;", 10)
+        };
+
+        for (final test test : tests) {
+            final var evaluated = testEval(test.input());
+            if (!isValidIntegerObject(evaluated, test.expected())) {
+                fail(String.format("Failed with -> [%s]", test));
+            }
+        }
+
+    }
+
 }
