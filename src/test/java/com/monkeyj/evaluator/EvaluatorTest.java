@@ -173,7 +173,14 @@ public class EvaluatorTest {
             new test("return 10;", 10),
             new test("return 10; 9;", 10),
             new test("return 2 * 5; 9;", 10),
-            new test("9; return 2 * 5; 9;", 10)
+            new test("9; return 2 * 5; 9;", 10),
+            new test("""
+                    if (10 > 1) {
+                        if (10 > 1) {
+                            return 10;
+                        }
+                        return 1;
+                    }""", 10)
         };
 
         for (final test test : tests) {

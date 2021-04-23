@@ -65,9 +65,38 @@ public final class Evaluator {
         return Literals.NULL;
     }
 
+    private static Obj evalProgram(final Program program) {
+        Obj result = null;
+
+        for (final var stmt : program.getStatements()) {
+            result = eval(stmt);
+
+            if (result instanceof ReturnValue returnValue) {
+                return returnValue.getValue();
+            }
+        }
+
+        return result;
+    }
+
+    private static Obj evalBlockStatement(final BlockStatement block) {
+        Obj result = null;
+
+        for (final var stmt : block.getStatements()) {
+            result = eval(stmt);
+
+            if (result != null && result.type().equals(ObjConstants.RETURN_VALUE_OBJ)) {
+                return result;
+            }
+        }
+
+        return result;
+    }
+
     public static Obj eval(final Node node) {
         if (node instanceof final Program program) {
-            return evalStatements(program.getStatements());
+            // return evalStatements(program.getStatements());
+            return evalProgram(program);
         } else if (node instanceof final ExpressionStatement expr) {
             return eval(expr.getExpression());
         } else if (node instanceof final IntegerLiteral literal) {
@@ -85,7 +114,9 @@ public final class Evaluator {
             final var right = Evaluator.eval(infix.getRight());
             return evalInfixExpression(infix.getOperator(), left, right);
         } else if (node instanceof BlockStatement blockStmt) {
-            return evalStatements(blockStmt.getStatements());
+            // return evalStatements(blockStmt.getStatements());
+            // return evalStatements(blockStmt.getStatements());
+            return evalBlockStatement(blockStmt);
         } else if (node instanceof IfExpression ifExpression) {
             return evalIfExpression(ifExpression);
         } else if (node instanceof ReturnStatement returnStmt) {
