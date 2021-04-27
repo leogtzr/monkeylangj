@@ -5,6 +5,7 @@ import com.monkeyj.object.Int;
 import com.monkeyj.object.Obj;
 import com.monkeyj.object.ObjConstants;
 import com.monkeyj.object.ReturnValue;
+import com.monkeyj.object.Error;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public final class Evaluator {
 
     private static Obj evalMinusPrefixOperatorExpression(final Obj right) {
         if (!right.type().equals(ObjConstants.INTEGER_OBJ)) {
-            return Literals.NULL;
+            return newError("unknown operator: -%s", right.type());
         }
 
         final var value = ((Int) right).getValue();
@@ -37,7 +38,7 @@ public final class Evaluator {
         return switch (operator) {
             case "!" -> evalBangOperatorExpression(right);
             case "-" -> evalMinusPrefixOperatorExpression(right);
-            default -> Literals.NULL;
+            default -> newError("unknown operator: %s%s", operator, right.type());
         };
     }
 
@@ -54,7 +55,7 @@ public final class Evaluator {
             case ">" -> nativeBoolToBooleanObject(leftVal > rightVal);
             case "==" -> nativeBoolToBooleanObject(leftVal == rightVal);
             case "!=" -> nativeBoolToBooleanObject(leftVal != rightVal);
-            default -> Literals.NULL;
+            default -> newError("unknown operator: %s %s %s", left.type(), operator, right.type());
         };
     }
 
@@ -62,7 +63,7 @@ public final class Evaluator {
         if (left.type().equals(ObjConstants.INTEGER_OBJ) && right.type().equals(ObjConstants.INTEGER_OBJ)) {
             return evalIntegerInfixExpression(operator, left, right);
         }
-        return Literals.NULL;
+        return newError("unknown operator: %s %s %s", left.type(), operator, right.type());
     }
 
     private static Obj evalProgram(final Program program) {
@@ -73,6 +74,8 @@ public final class Evaluator {
 
             if (result instanceof ReturnValue returnValue) {
                 return returnValue.getValue();
+            } else if (result instanceof Error error) {
+                return error;
             }
         }
 
@@ -84,9 +87,14 @@ public final class Evaluator {
 
         for (final var stmt : block.getStatements()) {
             result = eval(stmt);
-
-            if (result != null && result.type().equals(ObjConstants.RETURN_VALUE_OBJ)) {
-                return result;
+//            if (result != null && result.type().equals(ObjConstants.RETURN_VALUE_OBJ)) {
+//                return result;
+//            }
+            if (result != null) {
+                final var rt = result.type();
+                if (rt.equals(ObjConstants.RETURN_VALUE_OBJ) || rt.equals(ObjConstants.ERROR_OBJ)) {
+                    return result;
+                }
             }
         }
 
@@ -159,6 +167,10 @@ public final class Evaluator {
         }
 
         return result;
+    }
+
+    private static Error newError(final String format, final Object... args) {
+        return new Error(String.format(format, args));
     }
 
 }

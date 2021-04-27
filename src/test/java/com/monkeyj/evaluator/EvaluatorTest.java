@@ -3,6 +3,7 @@ package com.monkeyj.evaluator;
 import com.monkeyj.ast.Program;
 import com.monkeyj.lexer.Lexer;
 import com.monkeyj.object.Bool;
+import com.monkeyj.object.Error;
 import com.monkeyj.object.Int;
 import com.monkeyj.object.Obj;
 import com.monkeyj.parser.Parser;
@@ -11,6 +12,58 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EvaluatorTest {
+
+    @Test
+    public void shouldHandleErrors() {
+        record test(String input, String expectedMessage) {}
+
+        final test[] tests = {
+                new test("5 + true;", "unknown operator: INTEGER + BOOLEAN"),
+                new test("5 + true; 5;", "unknown operator: INTEGER + BOOLEAN"),
+                new test("-true", "unknown operator: -BOOLEAN"),
+                new test("true + false;", "unknown operator: BOOLEAN + BOOLEAN"),
+                new test("5; true + false; 5", "unknown operator: BOOLEAN + BOOLEAN"),
+                new test("if (10 > 1) { true + false; }", "unknown operator: BOOLEAN + BOOLEAN"),
+                new test(
+                        """
+if (10 > 1) {
+    if (10 > 1) {
+        return true + false;
+    }
+    return 1;
+}""", "unknown operator: BOOLEAN + BOOLEAN"
+                )
+        };
+
+        for (final test test : tests) {
+            final var evaluated = testEval(test.input());
+            if (evaluated instanceof Error err) {
+                assertEquals(test.expectedMessage(), err.getMessage(), String.format("For input: `%s`", test.input()));
+            } else {
+                System.err.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>");
+                System.err.println(evaluated.inspect());
+                System.err.println(evaluated instanceof Error);
+                fail(String.format("expecting an error for '%s' input", test.input()));
+            }
+        }
+
+    }
+
+    @Test
+    public void shouldEvaluateLetStatements() {
+        record test(String input, Integer expected) { }
+
+        final test[] tests = {
+            new test("let a = 5; a;", 5),
+            new test("let a = 5 * 5; a;", 25),
+            new test("let a = 5; let b = a; b;", 5),
+            new test("let a = 5; let b = a; let c = a + b + 5; c;", 15),
+        };
+
+        for (final test test : tests) {
+
+        }
+    }
 
     @Test
     public void shouldEvalIntegerExpression() {
