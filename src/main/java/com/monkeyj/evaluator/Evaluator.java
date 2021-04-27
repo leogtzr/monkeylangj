@@ -116,10 +116,16 @@ public final class Evaluator {
             return nativeBoolToBooleanObject(boolLiteral.getValue());
         } else if (node instanceof final PrefixExpression prefix) {
             final var right = eval(prefix.getRight());
-            return evalPrefixExpression(prefix.getOperator(), right);
+            return isError(right) ? right : evalPrefixExpression(prefix.getOperator(), right);
         } else if (node instanceof final InfixExpression infix) {
             final var left = Evaluator.eval(infix.getLeft());
+            if (isError(left)) {
+                return left;
+            }
             final var right = Evaluator.eval(infix.getRight());
+            if (isError(right)) {
+                return right;
+            }
             return evalInfixExpression(infix.getOperator(), left, right);
         } else if (node instanceof BlockStatement blockStmt) {
             // return evalStatements(blockStmt.getStatements());
@@ -129,7 +135,7 @@ public final class Evaluator {
             return evalIfExpression(ifExpression);
         } else if (node instanceof ReturnStatement returnStmt) {
             final var val = eval(returnStmt.getReturnValue());
-            return new ReturnValue(val);
+            return isError(val) ? val : new ReturnValue(val);
         }
 
         return null;
@@ -137,6 +143,9 @@ public final class Evaluator {
 
     private static Obj evalIfExpression(final IfExpression ifExpression) {
         final var condition = eval(ifExpression.getCondition());
+        if (isError(condition)) {
+            return condition;
+        }
 
         if (isTruthy(condition)) {
             return eval(ifExpression.getConsequence());
@@ -171,6 +180,14 @@ public final class Evaluator {
 
     private static Error newError(final String format, final Object... args) {
         return new Error(String.format(format, args));
+    }
+
+    private static boolean isError(final Obj obj) {
+        if (obj != null) {
+            return obj.type().equals(ObjConstants.ERROR_OBJ);
+        }
+
+        return false;
     }
 
 }
