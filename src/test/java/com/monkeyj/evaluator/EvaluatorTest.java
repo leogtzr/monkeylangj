@@ -2,10 +2,8 @@ package com.monkeyj.evaluator;
 
 import com.monkeyj.ast.Program;
 import com.monkeyj.lexer.Lexer;
-import com.monkeyj.object.Bool;
+import com.monkeyj.object.*;
 import com.monkeyj.object.Error;
-import com.monkeyj.object.Int;
-import com.monkeyj.object.Obj;
 import com.monkeyj.parser.Parser;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +30,8 @@ if (10 > 1) {
     }
     return 1;
 }""", "unknown operator: BOOLEAN + BOOLEAN"
-                )
+                ),
+                new test("foobar", "identifier not found: foobar"),
         };
 
         for (final test test : tests) {
@@ -99,8 +98,9 @@ if (10 > 1) {
         final var lex = new Lexer(input);
         final Parser parser = new Parser(lex);
         final Program program = parser.parseProgram();
+        final var env = new Environment();
 
-        return Evaluator.eval(program);
+        return Evaluator.eval(program, env);
     }
 
     private static boolean isValidIntegerObject(final Obj obj, final int expected) {
