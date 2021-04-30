@@ -65,7 +65,7 @@
                 <finalName>monkeyj</finalName>
                 <archive>
                   <manifest>
-                    <mainClass>com.monkeyj.repl.Repl</mainClass>
+                    <mainClass>com.monkeyj.repl.RunEvaluatePrintLoop</mainClass>
                   </manifest>
                 </archive>
                 <descriptorRefs>

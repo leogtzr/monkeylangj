@@ -8,7 +8,7 @@ import com.monkeyj.parser.Parser;
 import java.util.List;
 import java.util.Scanner;
 
-public class Repl {
+public class RunEvaluatePrintLoop {
 
     private static final String PROMPT = ">> ";
 

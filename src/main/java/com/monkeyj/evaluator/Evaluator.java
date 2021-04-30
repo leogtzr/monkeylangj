@@ -5,6 +5,7 @@ import com.monkeyj.ast.Bool;
 import com.monkeyj.object.*;
 import com.monkeyj.object.Error;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class Evaluator {
@@ -141,9 +142,69 @@ public final class Evaluator {
             env.set(letStmt.getName().getValue(), val);
         } else if (node instanceof Identifier identifier) {
             return evalIdentifier(identifier, env);
+        } else if (node instanceof FunctionLiteral fn) {
+            final var params = fn.getParameters();
+            final var body = fn.getBody();
+
+            return new Function(params, body, env);
+        } else if (node instanceof CallExpression call) {
+            final var function = eval(call.getFunction(), env);
+            if (isError(function)) {
+                return function;
+            }
+
+            final var args = evalExpressions(call.getArguments(), env);
+            if (args.size() == 1 && isError(args.get(0))) {
+                return args.get(0);
+            }
+
+            return applyFunction(function, args);
         }
 
         return null;
+    }
+
+    private static Obj applyFunction(final Obj function, final List<Obj> args) {
+        if (function instanceof Function fn) {
+            final var extendedEnv = extendFunctionEnv(fn, args);
+            final var evaluated = eval(fn.getBody(), extendedEnv);
+            return unwrapReturnValue(evaluated);   
+        }
+
+        return newError("not a function: %s", function.type());
+    }
+
+    private static Obj unwrapReturnValue(final Obj obj) {
+        if (obj instanceof ReturnValue returnValue) {
+            return returnValue.getValue();
+        }
+
+        return obj;
+    }
+
+    private static Environment extendFunctionEnv(final Function function, final List<Obj> args) {
+        final var env = Environment.newEnclosedEnvironment(function.getEnv());
+
+        for (int paramIdx = 0; paramIdx < function.getParameters().size(); paramIdx++) {
+            final var param = function.getParameters().get(paramIdx);
+            env.set(param.getValue(), args.get(paramIdx));
+        }
+
+        return env;
+    }
+
+    private static List<Obj> evalExpressions(final List<Expression> exps, final Environment env) {
+        final List<Obj> result = new ArrayList<>();
+
+        for (final var exp : exps) {
+            final var evaluated = eval(exp, env);
+            if (isError(evaluated)) {
+                return List.of(evaluated);
+            }
+            result.add(evaluated);
+        }
+
+        return result;
     }
 
     private static Obj evalIdentifier(final Identifier node, final Environment env) {

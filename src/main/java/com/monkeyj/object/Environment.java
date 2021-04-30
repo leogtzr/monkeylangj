@@ -5,13 +5,32 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Environment {
-    private final Map<String, Obj> store = new HashMap<>();
+    private Map<String, Obj> store;
+    private Environment outer;
+
+    public Environment() {
+        this.store = new HashMap<>();
+        this.outer = null;
+    }
+
+    public static Environment newEnclosedEnvironment(final Environment outer) {
+        final var env = new Environment(outer);
+        return env;
+    }
+
+    private Environment(final Environment outer) {
+        this.store = new HashMap<>();
+        this.outer = outer;
+    }
 
     public boolean exists(final String key) {
         return this.store.containsKey(key);
     }
 
     public Obj get(final String name) {
+        if (!this.store.containsKey(name) && this.outer != null) {
+            return this.outer.get(name);
+        }
         return this.store.get(name);
     }
 
@@ -43,4 +62,5 @@ public class Environment {
                 "store=" + store +
                 '}';
     }
+
 }

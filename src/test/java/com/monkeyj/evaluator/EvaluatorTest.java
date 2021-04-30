@@ -242,7 +242,50 @@ if (10 > 1) {
                 fail(String.format("Failed with -> [%s]", test));
             }
         }
+    }
 
+    @Test
+    public void shouldEvaluateFunctionObject() {
+        final String INPUT = "fn(x) { x + 2; };";
+        final String EXPECTED_BODY = "(x + 2)";
+        final String EXPECTED_PARAMETER_NAME = "x";
+
+        final var evaluated = testEval(INPUT);
+        if (!(evaluated instanceof Function)) {
+            fail(String.format("object is not Function, got=%s", evaluated));
+        }
+
+        final Function fn = (Function) evaluated;
+        assertEquals(1
+                , fn.getParameters().size()
+                , String.format("function has wrong parameters. Parameters=%s", fn.getParameters()));
+
+        assertEquals(EXPECTED_PARAMETER_NAME
+                , fn.getParameters().get(0).toString()
+                , String.format("parameter is not 'x'. got=%s", fn.getParameters().get(0)));
+
+        assertEquals(EXPECTED_BODY, fn.getBody().toString(), String.format("got=%s", fn.getBody().toString()));
+    }
+
+    @Test
+    public void shouldEvaluateFunctionApplication() {
+        record test(String input, Integer expected) {}
+
+        final test[] tests = {
+            new test("let identity = fn(x) { x; }; identity(5);", 5),
+            new test("let identity = fn(x) { return x; }; identity(5);", 5),
+            new test("let double = fn(x) { x * 2; }; double(5);", 10),
+            new test("let add = fn(x, y) { x + y; }; add(5, 5);", 10),
+            new test("let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20),
+            new test("fn(x) { x; }(5)", 5)
+        };
+
+        for (final test test : tests) {
+            final var evaluated = testEval(test.input());
+            if (!isValidIntegerObject(evaluated, test.expected())) {
+                fail();
+            }
+        }
     }
 
 }
