@@ -98,6 +98,9 @@ public class Lexer {
             case Character.MIN_VALUE:
                 tok = new Token(EOF, "");
                 break;
+            case '"':
+                tok = new Token(STRING, this.readString());
+                break;
             default:
                 if (isLetter(this.ch)) {
                     final String literal = this.readIdentifier();
@@ -114,6 +117,18 @@ public class Lexer {
         this.readChar();
 
         return tok;
+    }
+
+    private String readString() {
+        final int pos = this.position + 1;
+        for (;;) {
+            this.readChar();
+            if (this.ch == '"' || this.ch == 0) {
+                break;
+            }
+        }
+
+        return this.input.substring(pos, this.position);
     }
 
     private String readNumber() {

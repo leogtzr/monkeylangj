@@ -11,6 +11,17 @@ import java.util.Scanner;
 public class RunEvaluatePrintLoop {
 
     private static final String PROMPT = ">> ";
+    private static final String BANNER = """
+             ____________________________
+            < Welcome to monkeylang v1.0 >
+             ----------------------------
+                    \\   ^__^
+                     \\  (oo)\\_______
+                        (__)\\       )\\/\\
+                            ||----w |
+                            ||     ||
+                        
+            """;
 
     private static void printParserErrors(final List<String> errors) {
         for (final String error : errors) {
@@ -19,6 +30,7 @@ public class RunEvaluatePrintLoop {
     }
 
     public static void main(final String[] args) {
+        System.out.println(BANNER);
         System.out.print(PROMPT);
 
         final Scanner scanner = new Scanner(System.in);

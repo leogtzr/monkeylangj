@@ -10,6 +10,7 @@ public class TokenConstants {
     // Identifiers + literals.
     public static final String IDENT = "IDENT";
     public static final String INT   = "INT";
+    public static final String STRING = "STRING";
 
     // Operators.
     public static final String ASSIGN = "=";
