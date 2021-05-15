@@ -208,11 +208,12 @@ public final class Evaluator {
     }
 
     private static Obj evalIdentifier(final Identifier node, final Environment env) {
-        if (!env.exists(node.getValue())) {
+        final var val = env.get(node.getValue());
+        if (val == null) {
             return newError("identifier not found: " + node.getValue());
         }
 
-        return env.get(node.getValue());
+        return val;
     }
 
     private static Obj evalIfExpression(final IfExpression ifExpression, final Environment env) {

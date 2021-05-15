@@ -5,6 +5,7 @@ import com.monkeyj.lexer.Lexer;
 import com.monkeyj.object.*;
 import com.monkeyj.object.Error;
 import com.monkeyj.parser.Parser;
+import net.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -100,7 +101,9 @@ if (10 > 1) {
         final Program program = parser.parseProgram();
         final var env = new Environment();
 
-        return Evaluator.eval(program, env);
+        final var result = Evaluator.eval(program, env);
+        // System.out.println(result != null);
+        return result;
     }
 
     private static boolean isValidIntegerObject(final Obj obj, final int expected) {
@@ -288,4 +291,20 @@ if (10 > 1) {
         }
     }
 
+    @Test
+    public void shouldEvaluateClosures() {
+        final String INPUT = """
+let newAdder = fn(x) {
+    fn(y) { x + y };
+};
+let addTwo = newAdder(2);
+addTwo(2);
+                """;
+
+        final var evaluated = testEval(INPUT);
+        System.out.println(evaluated);
+        if (!isValidIntegerObject(evaluated, 4)) {
+            fail();
+        }
+    };
 }
