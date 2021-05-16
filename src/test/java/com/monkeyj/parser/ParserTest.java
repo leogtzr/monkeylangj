@@ -858,4 +858,27 @@ return 993322;
         }
     }
 
+    @Test
+    public void shouldEvaluateLiteralExpression() {
+        final String INPUT = "\"hello world\";";
+
+        final var lex = new Lexer(INPUT);
+        final Parser parser = new Parser(lex);
+        final var program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        assertEquals(
+                1, program.getStatements().size()
+                , String.format("program.Stmts does not contain %d statements, got=[%d]", 1, program.getStatements().size()));
+
+        assertTrue(program.getStatements().get(0) instanceof ExpressionStatement
+                , "program.statement[0] is not ast.ExpressionStatement");
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+
+        assertTrue(stmt.getExpression() instanceof StringLiteral, "program.statement[0] is not ast.Bool");
+
+        final StringLiteral strLiteral = (StringLiteral) stmt.getExpression();
+        assertEquals(strLiteral.getValue(), "hello world");
+    }
+
 }

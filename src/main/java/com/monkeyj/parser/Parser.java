@@ -45,6 +45,7 @@ public class Parser {
         this.registerPrefix(TokenConstants.LPAREN, this::parseGroupExpression);
         this.registerPrefix(TokenConstants.IF, this::parseIfExpression);
         this.registerPrefix(TokenConstants.FUNCTION, this::parseFunctionLiteral);
+        this.registerPrefix(TokenConstants.STRING, this::parseStringLiteral);
 
         this.registerInfix(TokenConstants.LPAREN, this::parseCallExpression);
         this.registerInfix(TokenConstants.PLUS, this::parseInfixExpression);
@@ -58,6 +59,14 @@ public class Parser {
 
         this.nextToken();
         this.nextToken();
+    }
+
+    private Expression parseStringLiteral() {
+        final var strLiteral = new StringLiteral();
+        strLiteral.setToken(this.curToken);
+        strLiteral.setValue(this.curToken.literal());
+        
+        return strLiteral;
     }
 
     private Expression parseCallExpression(final Expression function) {
