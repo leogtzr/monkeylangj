@@ -147,6 +147,8 @@ public final class Evaluator {
             final var body = fn.getBody();
 
             return new Function(params, body, env);
+        } else if (node instanceof StringLiteral str) {
+            return new Str(str.getValue());
         } else if (node instanceof CallExpression call) {
             final var function = eval(call.getFunction(), env);
             if (isError(function)) {

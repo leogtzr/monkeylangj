@@ -302,9 +302,18 @@ addTwo(2);
                 """;
 
         final var evaluated = testEval(INPUT);
-        System.out.println(evaluated);
         if (!isValidIntegerObject(evaluated, 4)) {
             fail();
         }
-    };
+    }
+
+    @Test
+    public void shouldEvaluateStringLiteral() {
+        final String INPUT = """
+                "Hello World!"
+                """;
+        final var evaluated = testEval(INPUT);
+        assertTrue(evaluated instanceof Str, "object is not String, got => " + evaluated);
+    }
+
 }

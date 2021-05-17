@@ -65,7 +65,7 @@ public class Parser {
         final var strLiteral = new StringLiteral();
         strLiteral.setToken(this.curToken);
         strLiteral.setValue(this.curToken.literal());
-        
+
         return strLiteral;
     }
 
