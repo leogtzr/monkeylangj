@@ -62,7 +62,31 @@ public final class Evaluator {
         if (left.type().equals(ObjConstants.INTEGER_OBJ) && right.type().equals(ObjConstants.INTEGER_OBJ)) {
             return evalIntegerInfixExpression(operator, left, right);
         }
+
+        if (left.type().equals(ObjConstants.STRING_OBJ) && right.type().equals(ObjConstants.STRING_OBJ)) {
+            return evalStringInfixExpression(operator, left, right);
+        }
+
+        if (operator.equals("==")) {
+            return nativeBoolToBooleanObject(left == right);
+        }
+
+        if (operator.equals("!=")) {
+            return nativeBoolToBooleanObject(left != right);
+        }
+
         return newError("unknown operator: %s %s %s", left.type(), operator, right.type());
+    }
+
+    private static Obj evalStringInfixExpression(final String operator, final Obj left, final Obj right) {
+        if (!operator.equals("+")) {
+            return newError("unknown operator: %s %s %s", left.type(), operator, right.type());
+        }
+
+        final var leftVal = ((Str) left).getValue();
+        final var rightVal = ((Str) right).getValue();
+
+        return new Str(leftVal + rightVal);
     }
 
     private static Obj evalProgram(final Program program, final Environment env) {

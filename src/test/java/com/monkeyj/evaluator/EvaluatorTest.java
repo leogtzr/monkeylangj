@@ -23,6 +23,9 @@ public class EvaluatorTest {
                 new test("true + false;", "unknown operator: BOOLEAN + BOOLEAN"),
                 new test("5; true + false; 5", "unknown operator: BOOLEAN + BOOLEAN"),
                 new test("if (10 > 1) { true + false; }", "unknown operator: BOOLEAN + BOOLEAN"),
+                new test("""
+                        "Hello" - "World"
+                        """, "unknown operator: STRING - STRING"),
                 new test(
                         """
 if (10 > 1) {
@@ -314,6 +317,21 @@ addTwo(2);
                 """;
         final var evaluated = testEval(INPUT);
         assertTrue(evaluated instanceof Str, "object is not String, got => " + evaluated);
+    }
+
+    @Test
+    public void shouldEvaluateStringConcatenation() {
+        final String INPUT = """
+                "Hello" + " " + "World!"
+                """;
+        final var evaluated = testEval(INPUT);
+        assertTrue(evaluated instanceof Str, "object is not String, got => " + evaluated);
+
+        final Str str = (Str) evaluated;
+        assertEquals(
+                "Hello World!"
+                , str.getValue()
+                , String.format("String has wrong value, got=" + (str.getValue())));
     }
 
 }
