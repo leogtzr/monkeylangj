@@ -2,7 +2,7 @@ package com.monkeyj.object;
 
 public final class ObjConstants {
 
-    private ObjConstants() {}
+    private ObjConstants() { }
 
     public static final String INTEGER_OBJ = "INTEGER";
     public static final String BOOLEAN_OBJ = "BOOLEAN";
@@ -11,5 +11,6 @@ public final class ObjConstants {
     public static final String ERROR_OBJ = "ERROR";
     public static final String FUNCTION_OBJ = "FUNCTION";
     public static final String STRING_OBJ = "STRING";
+    public static final String BUILTIN_OBJ = "BUILTIN";
 
 }

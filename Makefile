@@ -12,6 +12,5 @@ clean:
 test:
 	mvn test	
 
-
 repl:
 	java --enable-preview -jar target/monkeyj-jar-with-dependencies.jar

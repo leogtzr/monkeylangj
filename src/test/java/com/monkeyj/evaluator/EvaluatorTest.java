@@ -5,7 +5,6 @@ import com.monkeyj.lexer.Lexer;
 import com.monkeyj.object.*;
 import com.monkeyj.object.Error;
 import com.monkeyj.parser.Parser;
-import net.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -332,6 +331,44 @@ addTwo(2);
                 "Hello World!"
                 , str.getValue()
                 , String.format("String has wrong value, got=" + (str.getValue())));
+    }
+
+    @Test
+    public void shouldEvaluateBuiltinFunction() {
+        record test(String input, Object expected) {}
+
+        final test[] tests = {
+                new test("""
+                        len("")
+                        """, 0),
+                new test("""
+                        len("four")
+                        """, 4),
+                new test("""
+                        len("hello world")
+                        """, 11),
+                new test("""
+                        len(1)
+                        """, "argument to `len` not supported, got INTEGER"),
+                new test("""
+                        len("one", "two")
+                        """, "wrong number of arguments. got=2, want=1")
+        };
+
+        for (final test test : tests) {
+            final var evaluated = testEval(test.input());
+            if (test.expected() instanceof Integer i) {
+                if (!isValidIntegerObject(evaluated, (Integer) test.expected())) {
+                    fail();
+                }
+            } else if (test.expected() instanceof String) {
+                if (evaluated instanceof Error errObj) {
+                    assertEquals(test.expected(), errObj.getMessage());
+                } else {
+                    fail(String.format("object is not Error, got=%s", evaluated));
+                }
+            }
+        }
     }
 
 }

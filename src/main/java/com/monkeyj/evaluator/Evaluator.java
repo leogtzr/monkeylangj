@@ -197,6 +197,10 @@ public final class Evaluator {
             return unwrapReturnValue(evaluated);   
         }
 
+        if (function instanceof Builtin fn) {
+            return fn.getFn().apply(args);
+        }
+
         return newError("not a function: %s", function.type());
     }
 
@@ -235,11 +239,16 @@ public final class Evaluator {
 
     private static Obj evalIdentifier(final Identifier node, final Environment env) {
         final var val = env.get(node.getValue());
-        if (val == null) {
-            return newError("identifier not found: " + node.getValue());
+        if (val != null) {
+            return val;
         }
 
-        return val;
+        final var builtin = Builtins.BUILTINS.get(node.getValue());
+        if (builtin != null) {
+            return builtin;
+        }
+
+        return newError("identifier not found: " + node.getValue());
     }
 
     private static Obj evalIfExpression(final IfExpression ifExpression, final Environment env) {
@@ -279,7 +288,7 @@ public final class Evaluator {
         return result;
     }
 
-    private static Error newError(final String format, final Object... args) {
+    public static Error newError(final String format, final Object... args) {
         return new Error(String.format(format, args));
     }
 
