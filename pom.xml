@@ -102,8 +102,19 @@
                 </configuration>
                 <version>3.0.0-M5</version>
             </plugin>
-
         </plugins>
     </build>
+
+    <developers>
+      <developer>
+        <id>leogtzr</id>
+        <name>Leo Gutiérrez R.</name>
+        <email>leogutierrezramirez@gmail.com</email>
+        <roles>
+          <role>architect</role>
+          <role>developer</role>
+        </roles>
+      </developer>
+    </developers>
 
 </project>
