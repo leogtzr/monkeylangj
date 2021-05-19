@@ -881,4 +881,41 @@ return 993322;
         assertEquals(strLiteral.getValue(), "hello world");
     }
 
+    @Test
+    public void shouldParseArrayLiterals() {
+        final String INPUT = "[1, 2 * 2, 3 + 3]";
+        final var lex = new Lexer(INPUT);
+        final Parser parser = new Parser(lex);
+        final var program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        final var isStmt = program.getStatements().get(0) instanceof ExpressionStatement;
+        if (!isStmt) {
+            fail("expecting a ExpressionStatement");
+        }
+
+        final var stmt = (ExpressionStatement) program.getStatements().get(0);
+        if (!(stmt.getExpression() instanceof ArrayLiteral)) {
+            fail(String.format("exp not ast.ArrayLiteral, got=%s", stmt.getExpression()));
+        }
+
+        final var array = (ArrayLiteral) stmt.getExpression();
+        assertEquals(
+                3
+                , array.getElements().size()
+                , String.format("len(array.Elements) not 3. got=%d", array.getElements().size()));
+
+        if (!testIntegerLiteral(array.getElements().get(0), 1)) {
+            fail();
+        }
+
+        if (!testInfixExpression(array.getElements().get(1), 2, "*", 2)) {
+            fail();
+        }
+
+        if (!testInfixExpression(array.getElements().get(2), 3, "+", 3)) {
+            fail();
+        }
+    }
+
 }

@@ -1,21 +1,6 @@
 package com.monkeyj.parser;
 
-import com.monkeyj.ast.StringLiteral;
-import com.monkeyj.ast.Expression;
-import com.monkeyj.ast.InfixExpression;
-import com.monkeyj.ast.BlockStatement;
-import com.monkeyj.ast.ExpressionStatement;
-import com.monkeyj.ast.Statement;
-import com.monkeyj.ast.CallExpression;
-import com.monkeyj.ast.IfExpression;
-import com.monkeyj.ast.LetStatement;
-import com.monkeyj.ast.IntegerLiteral;
-import com.monkeyj.ast.ReturnStatement;
-import com.monkeyj.ast.Program;
-import com.monkeyj.ast.PrefixExpression;
-import com.monkeyj.ast.Identifier;
-import com.monkeyj.ast.FunctionLiteral;
-import com.monkeyj.ast.Bool;
+import com.monkeyj.ast.*;
 import com.monkeyj.lexer.Lexer;
 import com.monkeyj.token.Token;
 import com.monkeyj.token.TokenConstants;
@@ -65,6 +50,7 @@ public class Parser {
         this.registerPrefix(TokenConstants.IF, this::parseIfExpression);
         this.registerPrefix(TokenConstants.FUNCTION, this::parseFunctionLiteral);
         this.registerPrefix(TokenConstants.STRING, this::parseStringLiteral);
+        this.registerPrefix(TokenConstants.LBRACKET, this::parseArrayLiteral);
 
         this.registerInfix(TokenConstants.LPAREN, this::parseCallExpression);
         this.registerInfix(TokenConstants.PLUS, this::parseInfixExpression);
@@ -80,6 +66,38 @@ public class Parser {
         this.nextToken();
     }
 
+    private Expression parseArrayLiteral() {
+        final var array = new ArrayLiteral();
+        array.setToken(this.curToken);
+        array.setElements(this.parseExpressionList(TokenConstants.RBRACKET));
+
+        return array;
+    }
+
+    private List<Expression> parseExpressionList(final String end) {
+        final List<Expression> exprs = new ArrayList<>();
+
+        if (this.peekTokenIs(end)) {
+            this.nextToken();
+            return exprs;
+        }
+
+        this.nextToken();
+        exprs.add(this.parseExpression(Precedence.LOWEST));
+
+        while (this.peekTokenIs(TokenConstants.COMMA)) {
+            this.nextToken();
+            this.nextToken();
+            exprs.add(this.parseExpression(Precedence.LOWEST));
+        }
+
+        if (!this.expectPeek(end)) {
+            return null;
+        }
+
+        return exprs;
+    }
+
     private Expression parseStringLiteral() {
         final var strLiteral = new StringLiteral();
         strLiteral.setToken(this.curToken);
@@ -93,7 +111,8 @@ public class Parser {
         exp.setToken(this.curToken);
         exp.setFunction(function);
         
-        final List<Expression> arguments = this.parseCallArguments();
+        // final List<Expression> arguments = this.parseCallArguments();
+        final List<Expression> arguments = this.parseExpressionList(TokenConstants.RPAREN);
         exp.setArguments(arguments);
         
         return exp;
