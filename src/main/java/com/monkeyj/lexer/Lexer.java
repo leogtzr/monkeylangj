@@ -120,6 +120,12 @@ public class Lexer {
             case '"':
                 tok = new Token(TokenConstants.STRING, this.readString());
                 break;
+            case '[':
+                tok = new Token(TokenConstants.LBRACKET, this.ch + "");
+                break;
+            case ']':
+                tok = new Token(TokenConstants.RBRACKET, this.ch + "");
+                break;
             default:
                 if (isLetter(this.ch)) {
                     final String literal = this.readIdentifier();

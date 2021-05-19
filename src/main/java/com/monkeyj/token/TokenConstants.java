@@ -25,6 +25,8 @@ public class TokenConstants {
     public static final String RPAREN = ")";
     public static final String LBRACE = "{";
     public static final String RBRACE = "}";
+    public static final String LBRACKET = "[";
+    public static final String RBRACKET = "]";
     public static final String FUNCTION = "FUNCTION";
     public static final String LET      = "LET";
     public static final String TRUE = "TRUE";
