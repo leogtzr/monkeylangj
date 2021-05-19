@@ -51,15 +51,6 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>--enable-preview</argLine>
-                </configuration>
-                <version>3.0.0-M5</version>
-            </plugin>
-
-            <plugin>
               <artifactId>maven-assembly-plugin</artifactId>
               <configuration>
                 <finalName>monkeyj</finalName>
@@ -82,6 +73,36 @@
                 </execution>
               </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.14.0</version>
+                <configuration>
+                    <argLine>--enable-preview</argLine>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pmd-scan</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>--enable-preview</argLine>
+                    <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
+                    <forkCount>1</forkCount>
+                </configuration>
+                <version>3.0.0-M5</version>
+            </plugin>
+
         </plugins>
     </build>
 

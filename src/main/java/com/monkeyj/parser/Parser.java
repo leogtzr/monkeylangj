@@ -1,11 +1,30 @@
 package com.monkeyj.parser;
 
-import com.monkeyj.ast.*;
+import com.monkeyj.ast.StringLiteral;
+import com.monkeyj.ast.Expression;
+import com.monkeyj.ast.InfixExpression;
+import com.monkeyj.ast.BlockStatement;
+import com.monkeyj.ast.ExpressionStatement;
+import com.monkeyj.ast.Statement;
+import com.monkeyj.ast.CallExpression;
+import com.monkeyj.ast.IfExpression;
+import com.monkeyj.ast.LetStatement;
+import com.monkeyj.ast.IntegerLiteral;
+import com.monkeyj.ast.ReturnStatement;
+import com.monkeyj.ast.Program;
+import com.monkeyj.ast.PrefixExpression;
+import com.monkeyj.ast.Identifier;
+import com.monkeyj.ast.FunctionLiteral;
+import com.monkeyj.ast.Bool;
 import com.monkeyj.lexer.Lexer;
 import com.monkeyj.token.Token;
 import com.monkeyj.token.TokenConstants;
 
-import java.util.*;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Collections;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -331,7 +350,7 @@ public class Parser {
         Expression leftExpression = prefix.get();
 
         // the loop:
-        while (!this.peekTokenIs(TokenConstants.SEMICOLON) && (precedence < this.peekPrecedence())) {
+        while (!this.peekTokenIs(TokenConstants.SEMICOLON) && precedence < this.peekPrecedence()) {
             final var infix = this.infixParseFns.get(this.peekToken.type());
             if (infix == null) {
                 return leftExpression;

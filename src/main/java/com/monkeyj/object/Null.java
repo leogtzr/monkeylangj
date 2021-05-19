@@ -10,14 +10,4 @@ public class Null implements Obj {
     public String inspect() {
         return "null";
     }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return super.equals(obj);
-    }
 }
