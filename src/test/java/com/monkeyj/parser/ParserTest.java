@@ -2,6 +2,7 @@ package com.monkeyj.parser;
 
 import com.monkeyj.ast.*;
 import com.monkeyj.lexer.Lexer;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -508,7 +509,9 @@ return 993322;
             new test("!(true == true)", "(!(true == true))"),
             new test("a + add(b * c) + d", "((a + add((b * c))) + d)"),
             new test("add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))", "add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))"),
-            new test("add(a + b + c * d / f + g)", "add((((a + b) + ((c * d) / f)) + g))")
+            new test("add(a + b + c * d / f + g)", "add((((a + b) + ((c * d) / f)) + g))"),
+            new test("a * [1, 2, 3, 4][b * c] * d", "((a * ([1, 2, 3, 4][(b * c)])) * d)"),
+            new test("add(a * b[2], b[1], 2 * [1, 2][1])", "add((a * (b[2])), (b[1]), (2 * ([1, 2][1])))"),
         };
 
         for (final test test : tests) {
@@ -918,4 +921,29 @@ return 993322;
         }
     }
 
+    @Test
+    public void shouldParseIndexExpressions() {
+        final String INPUT = "myArray[1 + 1]";
+
+        final var lex = new Lexer(INPUT);
+        final Parser parser = new Parser(lex);
+        final var program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        assertTrue(program.getStatements().get(0) instanceof ExpressionStatement);
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+        assertTrue(
+                stmt.getExpression() instanceof IndexExpression
+                , String.format("exp not *ast.IndexExpression. got=%s", stmt.getExpression()));
+
+        final var indexExp = (IndexExpression) stmt.getExpression();
+
+        if (!testIdentifier(indexExp.getLeft(), "myArray")) {
+            fail();
+        }
+
+        if (!testInfixExpression(indexExp.getIndex(), 1, "+", 1)) {
+            fail();
+        }
+    }
 }

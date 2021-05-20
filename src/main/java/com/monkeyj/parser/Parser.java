@@ -30,7 +30,8 @@ public class Parser {
         TokenConstants.MINUS, Precedence.SUM,
         TokenConstants.SLASH, Precedence.PRODUCT,
         TokenConstants.ASTERISK, Precedence.PRODUCT,
-        TokenConstants.LPAREN, Precedence.CALL
+        TokenConstants.LPAREN, Precedence.CALL,
+        TokenConstants.LBRACKET, Precedence.INDEX
     );
 
     public Parser(final Lexer lexer) {
@@ -62,8 +63,26 @@ public class Parser {
         this.registerInfix(TokenConstants.LT, this::parseInfixExpression);
         this.registerInfix(TokenConstants.GT, this::parseInfixExpression);
 
+        this.registerInfix(TokenConstants.LBRACKET, this::parseIndexExpression);
+
         this.nextToken();
         this.nextToken();
+    }
+
+    private Expression parseIndexExpression(final Expression left) {
+        final var exp = new IndexExpression();
+        exp.setToken(this.curToken);
+        exp.setLeft(left);
+
+        this.nextToken();
+
+        exp.setIndex(this.parseExpression(Precedence.LOWEST));
+
+        if (!this.expectPeek(TokenConstants.RBRACKET)) {
+            return null;
+        }
+
+        return exp;
     }
 
     private Expression parseArrayLiteral() {
