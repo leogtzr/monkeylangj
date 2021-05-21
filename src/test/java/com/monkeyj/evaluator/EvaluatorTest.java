@@ -345,6 +345,10 @@ addTwo(2);
                         len([1, 5, 2])
                         """, 3),
                 new test("""
+                        last([1, 5, 2])
+                        """, 2),
+                new test("first(1)", "argument to `first` must be ARRAY, got INTEGER"),
+                new test("""
                         len("four")
                         """, 4),
                 new test("""
