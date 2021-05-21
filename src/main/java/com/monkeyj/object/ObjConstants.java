@@ -12,5 +12,6 @@ public final class ObjConstants {
     public static final String FUNCTION_OBJ = "FUNCTION";
     public static final String STRING_OBJ = "STRING";
     public static final String BUILTIN_OBJ = "BUILTIN";
+    public static final String ARRAY_OBJ = "ARRAY";
 
 }

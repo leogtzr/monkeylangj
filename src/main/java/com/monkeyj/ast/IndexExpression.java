@@ -58,8 +58,7 @@ public class IndexExpression implements Node, Expression {
         out.append(this.left.toString());
         out.append("[");
         out.append(this.index.toString());
-        out.append("]");
-        out.append(")");
+        out.append("])");
 
         return out.toString();
     }

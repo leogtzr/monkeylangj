@@ -185,9 +185,47 @@ public final class Evaluator {
             }
 
             return applyFunction(function, args);
+        } else if (node instanceof ArrayLiteral arr) {
+            final var elements = evalExpressions(arr.getElements(), env);
+            if (elements.size() == 1 && isError(elements.get(0))) {
+                return elements.get(0);
+            }
+
+            return new Array(elements);
+        } else if (node instanceof IndexExpression) {
+            final var left = eval(((IndexExpression) node).getLeft(), env);
+            if (isError(left)) {
+                return left;
+            }
+
+            final var index = eval(((IndexExpression) node).getIndex(), env);
+            if (isError(index)) {
+                return index;
+            }
+
+            return evalIndexExpression(left, index);
         }
 
         return null;
+    }
+
+    private static Obj evalIndexExpression(final Obj left, final Obj index) {
+        if (left.type().equals(ObjConstants.ARRAY_OBJ) && index.type().equals(ObjConstants.INTEGER_OBJ)) {
+            return evalArrayIndexExpression(left, index);
+        }
+        return newError("index operator not supported: %s", left.type());
+    }
+
+    private static Obj evalArrayIndexExpression(final Obj array, final Obj index) {
+        final var arrayObject = (Array) array;
+        final var idx = ((Int) index).getValue();
+        final var max = arrayObject.getElements().size() - 1;
+
+        if (idx < 0 || idx > max) {
+            return Literals.NULL;
+        }
+
+        return arrayObject.getElements().get(idx);
     }
 
     private static Obj applyFunction(final Obj function, final List<Obj> args) {

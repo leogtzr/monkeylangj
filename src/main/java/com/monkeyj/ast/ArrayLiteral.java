@@ -10,6 +10,12 @@ public class ArrayLiteral implements Node, Expression {
     private Token token;
     private List<Expression> elements;
 
+    public ArrayLiteral() {}
+
+    public ArrayLiteral(final List<Expression> elements) {
+        this.elements = elements;
+    }
+
     public Token getToken() {
         return token;
     }

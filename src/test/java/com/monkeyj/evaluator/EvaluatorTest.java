@@ -342,14 +342,15 @@ addTwo(2);
                         len("")
                         """, 0),
                 new test("""
+                        len([1, 5, 2])
+                        """, 3),
+                new test("""
                         len("four")
                         """, 4),
                 new test("""
                         len("hello world")
                         """, 11),
-                new test("""
-                        len(1)
-                        """, "argument to `len` not supported, got INTEGER"),
+                new test("len(1)", "argument to `len` not supported, got INTEGER"),
                 new test("""
                         len("one", "two")
                         """, "wrong number of arguments. got=2, want=1")
@@ -366,6 +367,52 @@ addTwo(2);
                     assertEquals(test.expected(), errObj.getMessage());
                 } else {
                     fail(String.format("object is not Error, got=%s", evaluated));
+                }
+            }
+        }
+    }
+
+    @Test
+    public void shouldParseArrayLiterals() {
+        final String INPUT = "[1, 2 * 2, 3 + 3]";
+        final var evaluated = testEval(INPUT);
+
+        assertTrue(evaluated instanceof Array, String.format("object is not Array. got=%s (%s)", evaluated, evaluated));
+
+        final var result = (Array) evaluated;
+
+        assertTrue(isValidIntegerObject(result.getElements().get(0), 1));
+        assertTrue(isValidIntegerObject(result.getElements().get(1), 4));
+        assertTrue(isValidIntegerObject(result.getElements().get(2), 6));
+    }
+
+    @Test
+    public void shouldParseArrayIndexExpressions() {
+        record test(String input, Object expected) {}
+
+        final test[] tests = {
+            new test("[1, 2, 3][0]", 1),
+            new test("[1, 2, 3][1]", 2),
+            new test("[1, 2, 3][2]", 3),
+            new test("let i = 0; [1][i];", 1),
+            new test("[1, 2, 3][1 + 1];", 3),
+            new test("let myArray = [1, 2, 3]; myArray[2];", 3),
+            new test("let myArray = [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];", 6),
+            new test("let myArray = [1, 2, 3]; let i = myArray[0]; myArray[i]", 2),
+            new test("[1, 2, 3][3]", null),
+            new test("[1, 2, 3][-1]", null)
+        };
+
+        for (final test test : tests) {
+            final var evaluated = testEval(test.input());
+            // System.out.println(evaluated);
+            if (test.expected() instanceof Integer) {
+                if (!isValidIntegerObject(evaluated, (Integer) test.expected())) {
+                    fail();
+                }
+            } else {
+                if (!isValidNullObject(evaluated)) {
+                    fail();
                 }
             }
         }

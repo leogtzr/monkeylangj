@@ -2,7 +2,6 @@ package com.monkeyj.parser;
 
 import com.monkeyj.ast.*;
 import com.monkeyj.lexer.Lexer;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

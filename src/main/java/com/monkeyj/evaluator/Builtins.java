@@ -1,9 +1,6 @@
 package com.monkeyj.evaluator;
 
-import com.monkeyj.object.Builtin;
-import com.monkeyj.object.Int;
-import com.monkeyj.object.Obj;
-import com.monkeyj.object.Str;
+import com.monkeyj.object.*;
 
 import java.util.Map;
 
@@ -24,6 +21,10 @@ public final class Builtins {
 
                         if (firstArg instanceof Str str) {
                             return new Int(str.getValue().length());
+                        }
+
+                        if (firstArg instanceof Array arr) {
+                            return new Int(arr.getElements().size());
                         }
 
                         return newError("argument to `len` not supported, got %s", firstArg.type());
