@@ -2,6 +2,8 @@ package com.monkeyj.evaluator;
 
 import com.monkeyj.object.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.monkeyj.evaluator.Evaluator.newError;
@@ -91,6 +93,24 @@ public final class Builtins {
 
                     return Literals.NULL;
                 }
+            )
+            , "push", new Builtin(
+                    args -> {
+                        if (args.size() != 2) {
+                            return newError("wrong number of arguments. got=%d, want=2", args.size());
+                        }
+
+                        if (!args.get(0).type().equals(ObjConstants.ARRAY_OBJ)) {
+                            return newError("argument to `push` must be ARRAY, got %s", args.get(0).type());
+                        }
+
+                        final var arr = (Array) args.get(0);
+
+                        final List<Obj> newElements = new ArrayList<>(arr.getElements());
+                        newElements.add(args.get(1));
+
+                        return new Array(newElements);
+                    }
             )
     );
 

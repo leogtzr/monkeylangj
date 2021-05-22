@@ -441,4 +441,23 @@ addTwo(2);
         }
     }
 
+    @Test
+    public void shouldEvaluatePushBuiltinFunction() {
+        record test(String input, String expected) {}
+
+        final test[] tests = {
+                new test("""
+                    let a = [1, 2, 3, 4]; let b = push(a, 98); b
+                """, "[1, 2, 3, 4, 98]"),
+                new test("""
+                    push(1, 2)
+                """, "ERROR: argument to `push` must be ARRAY, got INTEGER"),
+        };
+
+        for (final test test : tests) {
+            final var evaluated = testEval(test.input());
+            assertEquals(test.expected(), evaluated.inspect());
+        }
+    }
+
 }
