@@ -422,4 +422,23 @@ addTwo(2);
         }
     }
 
+    @Test
+    public void shouldEvaluateRestBuiltinFunction() {
+        record test(String input, String expected) {}
+
+        final test[] tests = {
+                new test("""
+                    let a = [1, 2, 3, 4]; rest(a)
+                """, "[2, 3, 4]"),
+                new test("""
+                    rest(1)
+                """, "ERROR: argument to `rest` must be ARRAY, got INTEGER"),
+        };
+
+        for (final test test : tests) {
+            final var evaluated = testEval(test.input());
+            assertEquals(test.expected(), evaluated.inspect());
+        }
+    }
+
 }

@@ -71,6 +71,27 @@ public final class Builtins {
                         return Literals.NULL;
                     }
             )
+            , "rest", new Builtin(
+                args -> {
+                    if (args.size() != 1) {
+                        return newError("wrong number of arguments. got=%d, want=1", args.size());
+                    }
+
+                    if (!args.get(0).type().equals(ObjConstants.ARRAY_OBJ)) {
+                        return newError("argument to `rest` must be ARRAY, got %s", args.get(0).type());
+                    }
+
+                    final var arr = (Array) args.get(0);
+                    final int length = arr.getElements().size();
+
+                    if (length > 0) {
+                        final var newElements = arr.getElements().subList(1, length);
+                        return new Array(newElements);
+                    }
+
+                    return Literals.NULL;
+                }
+            )
     );
 
 }
