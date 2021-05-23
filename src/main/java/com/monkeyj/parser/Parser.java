@@ -2,6 +2,7 @@ package com.monkeyj.parser;
 
 import com.monkeyj.ast.*;
 import com.monkeyj.lexer.Lexer;
+import com.monkeyj.object.Hash;
 import com.monkeyj.token.Token;
 import com.monkeyj.token.TokenConstants;
 
@@ -53,6 +54,8 @@ public class Parser {
         this.registerPrefix(TokenConstants.STRING, this::parseStringLiteral);
         this.registerPrefix(TokenConstants.LBRACKET, this::parseArrayLiteral);
 
+        this.registerPrefix(TokenConstants.LBRACE, this::parseHashLiteral);
+
         this.registerInfix(TokenConstants.LPAREN, this::parseCallExpression);
         this.registerInfix(TokenConstants.PLUS, this::parseInfixExpression);
         this.registerInfix(TokenConstants.MINUS, this::parseInfixExpression);
@@ -67,6 +70,39 @@ public class Parser {
 
         this.nextToken();
         this.nextToken();
+    }
+
+    private Expression parseHashLiteral() {
+        final var hash = new HashLiteral();
+        final Map<Expression, Expression> pairs = new HashMap<>();
+
+        hash.setToken(this.curToken);
+        hash.setPairs(pairs);
+
+        while (!this.peekTokenIs(TokenConstants.RBRACE)) {
+            this.nextToken();
+            final var key = this.parseExpression(Precedence.LOWEST);
+
+            if (!this.expectPeek(TokenConstants.COLON)) {
+                return null;
+            }
+
+            this.nextToken();
+            final var value = this.parseExpression(Precedence.LOWEST);
+
+            pairs.put(key, value);
+
+            if (!this.peekTokenIs(TokenConstants.RBRACE) && !this.expectPeek(TokenConstants.COMMA)) {
+                return null;
+            }
+        }
+
+        if (!this.expectPeek(TokenConstants.RBRACE)) {
+            System.out.println("hmmmm bye 3");
+            return null;
+        }
+
+        return hash;
     }
 
     private Expression parseIndexExpression(final Expression left) {

@@ -2,7 +2,7 @@ package com.monkeyj.object;
 
 import java.util.Objects;
 
-public class Int implements Obj {
+public class Int implements Obj, Hashable {
     private Integer value;
 
     public Int(final Integer value) {
@@ -51,5 +51,10 @@ public class Int implements Obj {
     @Override
     public String inspect() {
         return this.value + "";
+    }
+
+    @Override
+    public HashKey hashKey() {
+        return new HashKey(this.type(), this.value);
     }
 }

@@ -460,4 +460,16 @@ addTwo(2);
         }
     }
 
+    @Test
+    public void shouldEvaluateHashLiterals() {
+        final String INPUT = """
+                {
+                2: 10 - 9
+                }
+                """;
+
+        final var evaluated = testEval(INPUT);
+        // System.out.println(evaluated);
+    }
+
 }

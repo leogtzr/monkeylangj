@@ -2,7 +2,7 @@ package com.monkeyj.object;
 
 import java.util.Objects;
 
-public class Bool implements Obj {
+public class Bool implements Obj, Hashable {
 
     private boolean value;
 
@@ -45,5 +45,11 @@ public class Bool implements Obj {
     @Override
     public String inspect() {
         return String.format("%b", this.value);
+    }
+
+    @Override
+    public HashKey hashKey() {
+        int value = this.value ? 1 : 0;
+        return new HashKey(this.type(), value);
     }
 }

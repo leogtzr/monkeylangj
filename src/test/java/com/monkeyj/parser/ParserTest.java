@@ -2,9 +2,11 @@ package com.monkeyj.parser;
 
 import com.monkeyj.ast.*;
 import com.monkeyj.lexer.Lexer;
+import com.monkeyj.object.Str;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -945,4 +947,40 @@ return 993322;
             fail();
         }
     }
+
+    @Test
+    public void shouldParseHashLiteralsStringKeys() {
+        final String INPUT = """
+                {"one": 1, "two": 2, "three": 3}
+                """;
+
+        final var lex = new Lexer(INPUT);
+        final Parser parser = new Parser(lex);
+        final var program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        assertTrue(program.getStatements().get(0) instanceof ExpressionStatement);
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+        assertTrue(
+                stmt.getExpression() instanceof HashLiteral
+                , String.format("exp not *ast.HashLiteral. got=%s", stmt.getExpression()));
+
+        final HashLiteral hash = (HashLiteral) stmt.getExpression();
+        assertEquals(3, hash.getPairs().size());
+
+        final var expected = Map.of(
+            "one", 1,
+            "two", 2,
+            "three", 3
+        );
+
+        for (final Map.Entry<Expression, Expression> entry : hash.getPairs().entrySet()) {
+            assertTrue(entry.getKey() instanceof StringLiteral, String.format("key is not a String literal, got=%s", entry.getKey()));
+            final StringLiteral literal = (StringLiteral) entry.getKey();
+            final var expectedValue = expected.get(literal.toString());
+
+            assertTrue(testIntegerLiteral(entry.getValue(), expectedValue));
+        }
+    }
+
 }

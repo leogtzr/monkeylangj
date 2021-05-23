@@ -10,7 +10,7 @@ clean:
 	mvn clean
 
 test:
-	mvn test	
+	mvn --threads 8C test
 
 repl:
 	java --enable-preview -jar target/monkeyj-jar-with-dependencies.jar

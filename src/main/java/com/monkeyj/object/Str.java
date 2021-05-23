@@ -1,6 +1,6 @@
 package com.monkeyj.object;
 
-public class Str implements Obj {
+public class Str implements Obj, Hashable {
 
     private String value;
 
@@ -24,5 +24,11 @@ public class Str implements Obj {
     @Override
     public String inspect() {
         return this.value;
+    }
+
+    @Override
+    public HashKey hashKey() {
+        // TODO: fix
+        return new HashKey(this.type(), this.value.hashCode());
     }
 }

@@ -5,8 +5,7 @@ import com.monkeyj.ast.Bool;
 import com.monkeyj.object.*;
 import com.monkeyj.object.Error;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public final class Evaluator {
 
@@ -204,9 +203,36 @@ public final class Evaluator {
             }
 
             return evalIndexExpression(left, index);
+        } else if (node instanceof HashLiteral hash) {
+            return evalHashLiteral(hash, env);
         }
 
         return null;
+    }
+
+    private static Obj evalHashLiteral(final HashLiteral node, final Environment env) {
+        final Map<HashKey, HashPair> pairs = new HashMap<>();
+
+        for (final Map.Entry<Expression, Expression> entry : node.getPairs().entrySet()) {
+            final var key = eval(entry.getKey(), env);
+            if (isError(key)) {
+                return key;
+            }
+
+            if (key instanceof Hashable hashKey) {
+                final var value = eval(entry.getValue(), env);
+                if (isError(value)) {
+                    return value;
+                }
+
+                final var hashed = hashKey.hashKey();
+                pairs.put(hashed, new HashPair(key, value));
+            } else {
+                return newError("unusable as hash key: %s", key.type());
+            }
+        }
+
+        return new Hash(pairs);
     }
 
     private static Obj evalIndexExpression(final Obj left, final Obj index) {
