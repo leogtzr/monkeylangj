@@ -78,12 +78,16 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>3.14.0</version>
+                <configuration>
+                    <failOnViolation>false</failOnViolation>
+                </configuration>
                 <executions>
                     <execution>
                         <id>pmd-scan</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
+                            <goal>cpd-check</goal>
                         </goals>
                     </execution>
                 </executions>
