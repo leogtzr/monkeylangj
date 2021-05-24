@@ -65,7 +65,8 @@ if (10 > 1) {
         };
 
         for (final test test : tests) {
-
+            final var evaluated = testEval(test.input());
+            assertTrue(isValidIntegerObject(evaluated, test.expected()));
         }
     }
 
