@@ -2,7 +2,6 @@ package com.monkeyj.parser;
 
 import com.monkeyj.ast.*;
 import com.monkeyj.lexer.Lexer;
-import com.monkeyj.object.Str;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -39,11 +38,8 @@ let foobar = 838383;
 
         for (int i = 0; i < tests.length; i++) {
             final var stmt = program.getStatements().get(i);
-            if (!testLetStatement(stmt, tests[i].expectedIdentifier)) {
-                fail("error parsing let stmt");
-            }
+            assertTrue(testLetStatement(stmt, tests[i].expectedIdentifier), "error parsing let stmt");
         }
-
     }
 
     private boolean testLetStatement(final Statement stmt, final String name) {
@@ -91,9 +87,7 @@ let foobar = 838383;
 
         for (int i = 0; i < tests.length; i++) {
             final var stmt = program.getStatements().get(i);
-            if (!testLetStatement(stmt, tests[i].expectedIdentifier)) {
-                fail("error parsing let stmt");
-            }
+            assertTrue(testLetStatement(stmt, tests[i].expectedIdentifier), "error parsing let stmt");
         }
 
     }
@@ -134,9 +128,7 @@ let foobar = 838383;
 
         for (int i = 0; i < tests.length; i++) {
             final var stmt = program.getStatements().get(i);
-            if (!testLetStatement(stmt, tests[i].expectedIdentifier)) {
-                fail("error parsing let stmt");
-            }
+            assertTrue(testLetStatement(stmt, tests[i].expectedIdentifier), "error parsing let stmt");
         }
     }
 
@@ -164,16 +156,12 @@ let foobar = 838383;
                             , EXPECTED_NUMBER_LET_STATEMENTS, program.getStatements().size()));
 
             final var stmt = program.getStatements().get(0);
-            if (!testLetStatement(stmt, test.expectedIdentifier)) {
-                 fail();
-            }
+            assertTrue(testLetStatement(stmt, test.expectedIdentifier));
 
             assertTrue(stmt instanceof LetStatement, "program.statement[0] is not ast.LetStatement");
             final var val = ((LetStatement) stmt).getValue();
 
-            if (!testLiteralExpression(val, test.expectedValue)) {
-                fail();
-            }
+            assertTrue(testLiteralExpression(val, test.expectedValue));
         }
     }
 
@@ -224,14 +212,6 @@ return 993322;
         }
     }
 
-    /*
-    func TestReturnStatements(t *testing.T) {
-		if testLiteralExpression(t, returnStmt.ReturnValue, tt.expectedValue) {
-			return
-		}
-	}
-}
-     */
     @Test
     public void shouldParseReturnStatement2() {
         record test(String input, Object expectedValue) {}
@@ -260,10 +240,7 @@ return 993322;
 
             final var returnStmt = (ReturnStatement) stmt;
             assertEquals("return", returnStmt.tokenLiteral());
-
-            if (!testLiteralExpression(returnStmt.getReturnValue(), test.expectedValue)) {
-                fail();
-            }
+            assertTrue(testLiteralExpression(returnStmt.getReturnValue(), test.expectedValue));
         }
     }
 
@@ -351,9 +328,7 @@ return 993322;
             final PrefixExpression exp = (PrefixExpression) stmt.getExpression();
             assertEquals(test.operator(), exp.getOperator());
 
-            if (!testIntegerLiteral(exp.getRight(), test.integerValue())) {
-                fail();
-            }
+            assertTrue(testIntegerLiteral(exp.getRight(), test.integerValue()));
         }
     }
 
@@ -387,9 +362,7 @@ return 993322;
             final PrefixExpression exp = (PrefixExpression) stmt.getExpression();
             assertEquals(test.operator(), exp.getOperator());
 
-            if (!testLiteralExpression(exp.getRight(), test.value())) {
-                fail();
-            }
+            assertTrue(testLiteralExpression(exp.getRight(), test.value()));
         }
     }
 
@@ -425,19 +398,10 @@ return 993322;
 
             final InfixExpression exp = (InfixExpression) stmt.getExpression();
 
-            if (!testIntegerLiteral(exp.getLeft(), test.leftValue())) {
-                fail();
-            }
-
+            assertTrue(testIntegerLiteral(exp.getLeft(), test.leftValue()));
             assertEquals(test.operator(), exp.getOperator());
-
-            if (!testIntegerLiteral(exp.getRight(), test.rightValue)) {
-                fail();
-            }
-
-            if (!testInfixExpression(stmt.getExpression(), test.leftValue(), test.operator(), test.rightValue())) {
-                fail();
-            }
+            assertTrue(testIntegerLiteral(exp.getRight(), test.rightValue));
+            assertTrue(testInfixExpression(stmt.getExpression(), test.leftValue(), test.operator(), test.rightValue()));
         }
     }
 
@@ -474,9 +438,7 @@ return 993322;
             final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
             assertTrue(stmt.getExpression() instanceof InfixExpression, "exp not ast.PrefixExpression");
 
-            if (!testInfixExpression(stmt.getExpression(), test.leftValue(), test.operator(), test.rightValue())) {
-                fail();
-            }
+            assertTrue(testInfixExpression(stmt.getExpression(), test.leftValue(), test.operator(), test.rightValue()));
         }
     }
 
@@ -738,9 +700,7 @@ return 993322;
                 , "exp.conseq.stmt[0] is not ExpressionStatement");
         final ExpressionStatement alternative = (ExpressionStatement) exp.getAlternative().getStatements().get(0);
 
-        if (!testIdentifier(alternative.getExpression(), "y")) {
-            return;
-        }
+        assertTrue(testIdentifier(alternative.getExpression(), "y"));
     }
 
     @Test
@@ -769,12 +729,8 @@ return 993322;
             , function.getParameters().size()
             , String.format("function literal parameters wrong. want 2, got=%d", function.getParameters().size()));
 
-        if (!testLiteralExpression(function.getParameters().get(0), "x")) {
-            fail();
-        }
-        if (!testLiteralExpression(function.getParameters().get(0), "x")) {
-            fail();
-        }
+        assertTrue(testLiteralExpression(function.getParameters().get(0), "x"));
+        assertTrue(testLiteralExpression(function.getParameters().get(0), "x"));
 
         assertEquals(
             1, function.getBody().getStatements().size()
@@ -783,9 +739,7 @@ return 993322;
         assertTrue(function.getBody().getStatements().get(0) instanceof ExpressionStatement);
 
         final ExpressionStatement bodyStmt = (ExpressionStatement) function.getBody().getStatements().get(0);
-        if (!testInfixExpression(bodyStmt.getExpression(), "x", "+", "y")) {
-            fail();
-        }
+        assertTrue(testInfixExpression(bodyStmt.getExpression(), "x", "+", "y"));
     }
 
     @Test
@@ -814,9 +768,7 @@ return 993322;
 
             for (int i = 0; i < test.expectedParams.size(); i++) {
                 final String ident = test.expectedParams().get(i);
-                if (!testLiteralExpression(function.getParameters().get(i), ident)) {
-                    fail();
-                }
+                assertTrue(testLiteralExpression(function.getParameters().get(i), ident));
             }
         }
     }
@@ -842,24 +794,14 @@ return 993322;
                 , "program.statement[0] is not ast.CallExpression");
 
         final CallExpression exp = (CallExpression) stmt.getExpression();
-        if (!testIdentifier(exp.getFunction(), "add")) {
-            fail();
-        }
+        assertTrue(testIdentifier(exp.getFunction(), "add"));
 
         final int numberOfFunctionArgs = exp.getArguments().size();
         assertEquals(3, numberOfFunctionArgs, String.format("wrong length of arguments. got=%d", numberOfFunctionArgs));
 
-        if (!testLiteralExpression(exp.getArguments().get(0), 1)) {
-            fail();
-        }
-
-        if (!testInfixExpression(exp.getArguments().get(1), 2, "*", 3)) {
-            fail();
-        }
-
-        if (!testInfixExpression(exp.getArguments().get(2), 4, "+", 5)) {
-            fail();
-        }
+        assertTrue(testLiteralExpression(exp.getArguments().get(0), 1));
+        assertTrue(testInfixExpression(exp.getArguments().get(1), 2, "*", 3));
+        assertTrue(testInfixExpression(exp.getArguments().get(2), 4, "+", 5));
     }
 
     @Test
@@ -893,15 +835,10 @@ return 993322;
         final var program = parser.parseProgram();
         checkParserErrors(parser);
 
-        final var isStmt = program.getStatements().get(0) instanceof ExpressionStatement;
-        if (!isStmt) {
-            fail("expecting a ExpressionStatement");
-        }
+        assertTrue(program.getStatements().get(0) instanceof ExpressionStatement, "expecting a ExpressionStatement");
 
         final var stmt = (ExpressionStatement) program.getStatements().get(0);
-        if (!(stmt.getExpression() instanceof ArrayLiteral)) {
-            fail(String.format("exp not ast.ArrayLiteral, got=%s", stmt.getExpression()));
-        }
+        assertTrue(stmt.getExpression() instanceof ArrayLiteral, String.format("exp not ast.ArrayLiteral, got=%s", stmt.getExpression()));
 
         final var array = (ArrayLiteral) stmt.getExpression();
         assertEquals(
@@ -909,17 +846,9 @@ return 993322;
                 , array.getElements().size()
                 , String.format("len(array.Elements) not 3. got=%d", array.getElements().size()));
 
-        if (!testIntegerLiteral(array.getElements().get(0), 1)) {
-            fail();
-        }
-
-        if (!testInfixExpression(array.getElements().get(1), 2, "*", 2)) {
-            fail();
-        }
-
-        if (!testInfixExpression(array.getElements().get(2), 3, "+", 3)) {
-            fail();
-        }
+        assertTrue(testIntegerLiteral(array.getElements().get(0), 1));
+        assertTrue(testInfixExpression(array.getElements().get(1), 2, "*", 2));
+        assertTrue(testInfixExpression(array.getElements().get(2), 3, "+", 3));
     }
 
     @Test
@@ -939,13 +868,8 @@ return 993322;
 
         final var indexExp = (IndexExpression) stmt.getExpression();
 
-        if (!testIdentifier(indexExp.getLeft(), "myArray")) {
-            fail();
-        }
-
-        if (!testInfixExpression(indexExp.getIndex(), 1, "+", 1)) {
-            fail();
-        }
+        assertTrue(testIdentifier(indexExp.getLeft(), "myArray"));
+        assertTrue(testInfixExpression(indexExp.getIndex(), 1, "+", 1));
     }
 
     @Test
@@ -980,6 +904,64 @@ return 993322;
             final var expectedValue = expected.get(literal.toString());
 
             assertTrue(testIntegerLiteral(entry.getValue(), expectedValue));
+        }
+    }
+
+    @Test
+    public void shouldParseEmptyHashLiteral() {
+        final String INPUT = "{}";
+
+        final var lex = new Lexer(INPUT);
+        final Parser parser = new Parser(lex);
+        final var program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        assertTrue(program.getStatements().get(0) instanceof ExpressionStatement);
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+        assertTrue(
+                stmt.getExpression() instanceof HashLiteral
+                , String.format("exp not *ast.HashLiteral. got=%s", stmt.getExpression()));
+
+        final HashLiteral hash = (HashLiteral) stmt.getExpression();
+        assertEquals(0, hash.getPairs().size());
+    }
+
+    @Test
+    public void shouldParseHashLiteralsWithExpressions() {
+        final String INPUT = """
+                {"one": 0 + 1, "two": 10 - 8, "three": 15 / 5}
+                """;
+
+        final var lex = new Lexer(INPUT);
+        final Parser parser = new Parser(lex);
+        final var program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        assertTrue(program.getStatements().get(0) instanceof ExpressionStatement);
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+        assertTrue(
+                stmt.getExpression() instanceof HashLiteral
+                , String.format("exp not *ast.HashLiteral. got=%s", stmt.getExpression()));
+
+        final HashLiteral hash = (HashLiteral) stmt.getExpression();
+        assertEquals(3, hash.getPairs().size());
+
+        record test(String hashKey, Integer left, String op, Integer right) {}
+
+        final Map<String, test> expected = Map.of(
+            "one", new test("one", 0, "+", 1),
+            "two", new test("two", 10, "-", 8),
+            "three", new test("three", 15, "/", 5)
+        );
+
+        for (final Map.Entry<Expression, Expression> entry : hash.getPairs().entrySet()) {
+            assertTrue(entry.getKey() instanceof StringLiteral);
+            assertTrue(entry.getValue() instanceof InfixExpression);
+
+            final var literal = (StringLiteral) entry.getKey();
+            final var test = expected.get(literal.toString());
+
+            assertTrue(testInfixExpression(entry.getValue(), test.left(), test.op(), test.right()));
         }
     }
 

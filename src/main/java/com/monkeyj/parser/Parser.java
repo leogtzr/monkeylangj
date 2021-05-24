@@ -2,7 +2,6 @@ package com.monkeyj.parser;
 
 import com.monkeyj.ast.*;
 import com.monkeyj.lexer.Lexer;
-import com.monkeyj.object.Hash;
 import com.monkeyj.token.Token;
 import com.monkeyj.token.TokenConstants;
 
@@ -173,7 +172,7 @@ public class Parser {
         return exp;
     }
 
-    private List<Expression> parseCallArguments() {
+    /*private List<Expression> parseCallArguments() {
         final List<Expression> args = new ArrayList<>();
 
         if (this.peekTokenIs(TokenConstants.RPAREN)) {
@@ -195,7 +194,7 @@ public class Parser {
         }
 
         return args;
-    }
+    }*/
 
     private Expression parseFunctionLiteral() {
         final var lit = new FunctionLiteral();

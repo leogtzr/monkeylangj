@@ -22,11 +22,11 @@ public final class Builtins {
                     final Obj firstArg = args.get(0);
 
                     if (firstArg instanceof Str str) {
-                        return new Int(str.getValue().length());
+                        return Int.of(str.getValue().length());
                     }
 
                     if (firstArg instanceof Array arr) {
-                        return new Int(arr.getElements().size());
+                        return Int.of(arr.getElements().size());
                     }
 
                     return newError("argument to `len` not supported, got %s", firstArg.type());

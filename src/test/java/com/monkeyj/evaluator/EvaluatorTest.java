@@ -7,6 +7,8 @@ import com.monkeyj.object.Error;
 import com.monkeyj.parser.Parser;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EvaluatorTest {
@@ -91,9 +93,7 @@ if (10 > 1) {
 
         for (final test test : tests) {
             final var evaluated = testEval(test.input());
-            if (!isValidIntegerObject(evaluated, test.expected())) {
-                fail();
-            }
+            assertTrue(isValidIntegerObject(evaluated, test.expected()));
         }
     }
 
@@ -104,7 +104,6 @@ if (10 > 1) {
         final var env = new Environment();
 
         final var result = Evaluator.eval(program, env);
-        // System.out.println(result != null);
         return result;
     }
 
@@ -159,9 +158,7 @@ if (10 > 1) {
 
         for (final test test : tests) {
             final var evaluated = testEval(test.input());
-            if (!isValidBooleanObject(evaluated, test.expected())) {
-                fail();
-            }
+            assertTrue(isValidBooleanObject(evaluated, test.expected()));
         }
     }
 
@@ -180,9 +177,7 @@ if (10 > 1) {
 
         for (final test test : tests) {
             final var evaluated = testEval(test.input());
-            if (!isValidBooleanObject(evaluated, test.expected())) {
-                fail();
-            }
+            assertTrue(isValidBooleanObject(evaluated, test.expected()));
         }
     }
 
@@ -212,13 +207,9 @@ if (10 > 1) {
         for (final test test : tests) {
             final var evaluated = testEval(test.input());
             if (test.expected() instanceof Integer) {
-                if (!isValidIntegerObject(evaluated, (Integer)test.expected())) {
-                    fail();
-                }
+                assertTrue(isValidIntegerObject(evaluated, (Integer)test.expected()));
             } else {
-                if (!isValidNullObject(evaluated)) {
-                    fail();
-                }
+                assertTrue(isValidNullObject(evaluated));
             }
         }
     }
@@ -243,9 +234,7 @@ if (10 > 1) {
 
         for (final test test : tests) {
             final var evaluated = testEval(test.input());
-            if (!isValidIntegerObject(evaluated, test.expected())) {
-                fail(String.format("Failed with -> [%s]", test));
-            }
+            assertTrue(isValidIntegerObject(evaluated, test.expected()), String.format("Failed with -> [%s]", test));
         }
     }
 
@@ -256,9 +245,7 @@ if (10 > 1) {
         final String EXPECTED_PARAMETER_NAME = "x";
 
         final var evaluated = testEval(INPUT);
-        if (!(evaluated instanceof Function)) {
-            fail(String.format("object is not Function, got=%s", evaluated));
-        }
+        assertTrue(evaluated instanceof Function, String.format("object is not Function, got=%s", evaluated));
 
         final Function fn = (Function) evaluated;
         assertEquals(1
@@ -287,9 +274,7 @@ if (10 > 1) {
 
         for (final test test : tests) {
             final var evaluated = testEval(test.input());
-            if (!isValidIntegerObject(evaluated, test.expected())) {
-                fail();
-            }
+            assertTrue(isValidIntegerObject(evaluated, test.expected()));
         }
     }
 
@@ -304,9 +289,7 @@ addTwo(2);
                 """;
 
         final var evaluated = testEval(INPUT);
-        if (!isValidIntegerObject(evaluated, 4)) {
-            fail();
-        }
+        assertTrue(isValidIntegerObject(evaluated, 4));
     }
 
     @Test
@@ -363,9 +346,7 @@ addTwo(2);
         for (final test test : tests) {
             final var evaluated = testEval(test.input());
             if (test.expected() instanceof Integer i) {
-                if (!isValidIntegerObject(evaluated, (Integer) test.expected())) {
-                    fail();
-                }
+                assertTrue(isValidIntegerObject(evaluated, (Integer) test.expected()));
             } else if (test.expected() instanceof String) {
                 if (evaluated instanceof Error errObj) {
                     assertEquals(test.expected(), errObj.getMessage());
@@ -409,15 +390,10 @@ addTwo(2);
 
         for (final test test : tests) {
             final var evaluated = testEval(test.input());
-            // System.out.println(evaluated);
             if (test.expected() instanceof Integer) {
-                if (!isValidIntegerObject(evaluated, (Integer) test.expected())) {
-                    fail();
-                }
+                assertTrue(isValidIntegerObject(evaluated, (Integer) test.expected()));
             } else {
-                if (!isValidNullObject(evaluated)) {
-                    fail();
-                }
+                assertTrue(isValidNullObject(evaluated));
             }
         }
     }
@@ -463,13 +439,99 @@ addTwo(2);
     @Test
     public void shouldEvaluateHashLiterals() {
         final String INPUT = """
+                let two = "two";
                 {
-                2: 10 - 9
+                    "one": 10 - 9,
+                    two: 1 + 1,
+                    "thr" + "ee": 6 / 2,
+                    4: 4,
+                    true: 5,
+                    false: 6
                 }
                 """;
 
         final var evaluated = testEval(INPUT);
-        // System.out.println(evaluated);
+        assertTrue(evaluated instanceof Hash, String.format("Eval didn't return Hash. got=%s", evaluated, evaluated));
+
+        final Map<HashKey, Integer> expectedHashes = Map.of(
+            Str.of("one").hashKey(), 1,
+            Str.of("two").hashKey(), 2,
+            Str.of("three").hashKey(), 3,
+            Int.of(4).hashKey(), 4,
+            Literals.TRUE.hashKey(), 5,
+            Literals.FALSE.hashKey(), 6
+        );
+
+        final var result = (Hash) evaluated;
+        assertEquals(expectedHashes.size(), result.getPairs().size());
+
+        for (final var expected : expectedHashes.entrySet()) {
+            final var pair = result.getPairs().get(expected.getKey());
+
+            assertTrue(pair != null);
+            assertTrue(isValidIntegerObject(pair.getValue(), expected.getValue()));
+        }
+    }
+
+    @Test
+    public void shouldEvaluateHashIndexExpressions() {
+        record test(String input, Object expected) {}
+
+        final test[] tests = {
+            new test(
+                    """
+                            {"foo": 5}["foo"]
+                            """, 5
+            ),
+            new test(
+                    """
+                            {"foo": 5}["bar"]
+                            """,
+                    null
+            ),
+            new test(
+                    """
+                            let key = "foo"; {"foo": 5}[key]
+                            """,
+                    5
+            ),
+            new test(
+                    """
+                            {}["foo"]
+                            """,
+                    null
+            ),
+            new test(
+                    """
+                            {5: 5}[5]
+                            """,
+                    5
+            ),
+            new test(
+                    """
+                            {true: 5}[true]
+                            """,
+                    5
+            ),
+            new test(
+                    """
+                            {false: 5}[false]
+                            """,
+                    5
+            )
+        };
+
+        for (final var test : tests) {
+            final var evaluated = testEval(test.input());
+//            System.out.println(evaluated);
+            if (test.expected() instanceof Integer i) {
+                // System.out.println("Value: " + i);
+                assertTrue(isValidIntegerObject(evaluated, i));
+            } else {
+                assertTrue(isValidNullObject(evaluated));
+            }
+        }
+
     }
 
 }

@@ -4,25 +4,6 @@ import com.monkeyj.token.Keywords;
 import com.monkeyj.token.Token;
 
 import com.monkeyj.token.TokenConstants;
-//import static com.monkeyj.token.TokenConstants.EQ;
-//import static com.monkeyj.token.TokenConstants.LPAREN;
-//import static com.monkeyj.token.TokenConstants.RPAREN;
-//import static com.monkeyj.token.TokenConstants.COMMA;
-//import static com.monkeyj.token.TokenConstants.MINUS;
-//import static com.monkeyj.token.TokenConstants.LBRACE;
-//import static com.monkeyj.token.TokenConstants.RBRACE;
-//import static com.monkeyj.token.TokenConstants.NOT_EQ;
-//import static com.monkeyj.token.TokenConstants.BANG;
-//import static com.monkeyj.token.TokenConstants.SLASH;
-//import static com.monkeyj.token.TokenConstants.ASTERISK;
-//import static com.monkeyj.token.TokenConstants.LT;
-//import static com.monkeyj.token.TokenConstants.GT;
-//import static com.monkeyj.token.TokenConstants.EOF;
-//import static com.monkeyj.token.TokenConstants.STRING;
-//import static com.monkeyj.token.TokenConstants.INT;
-//import static com.monkeyj.token.TokenConstants.ILLEGAL;
-//import static com.monkeyj.token.TokenConstants.PLUS;
-//import static com.monkeyj.token.TokenConstants.SEMICOLON;
 
 public class Lexer {
 

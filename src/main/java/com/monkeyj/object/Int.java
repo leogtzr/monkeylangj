@@ -3,7 +3,12 @@ package com.monkeyj.object;
 import java.util.Objects;
 
 public class Int implements Obj, Hashable {
+
     private Integer value;
+
+    public static Int of(final Integer value) {
+        return new Int(value);
+    }
 
     public Int(final Integer value) {
         this.value = value;

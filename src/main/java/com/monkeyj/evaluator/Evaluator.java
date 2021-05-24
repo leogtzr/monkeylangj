@@ -238,8 +238,25 @@ public final class Evaluator {
     private static Obj evalIndexExpression(final Obj left, final Obj index) {
         if (left.type().equals(ObjConstants.ARRAY_OBJ) && index.type().equals(ObjConstants.INTEGER_OBJ)) {
             return evalArrayIndexExpression(left, index);
+        } else if (left.type().equals(ObjConstants.HASH_OBJ)) {
+            return evalHashIndexExpression(left, index);
         }
         return newError("index operator not supported: %s", left.type());
+    }
+
+    private static Obj evalHashIndexExpression(final Obj hash, final Obj index) {
+        final var hashObject = (Hash) hash;
+        if (!(index instanceof Hashable)) {
+            return newError("unusable as hash key: %s", index.type());
+        }
+
+        final Hashable key = (Hashable) index;
+        final var pair = hashObject.getPairs().get(key.hashKey());
+        if (pair == null) {
+            return Literals.NULL;
+        }
+
+        return pair.getValue();
     }
 
     private static Obj evalArrayIndexExpression(final Obj array, final Obj index) {
