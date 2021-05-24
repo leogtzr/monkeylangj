@@ -112,6 +112,15 @@ public final class Builtins {
                         return new Array(newElements);
                     }
             )
+            , "puts", new Builtin(
+                    args -> {
+                        for (final var arg : args) {
+                            System.out.println(arg.inspect());
+                        }
+
+                        return Literals.NULL;
+                    }
+            )
     );
 
 }
