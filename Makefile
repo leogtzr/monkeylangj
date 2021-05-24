@@ -14,3 +14,6 @@ test:
 
 repl:
 	java --enable-preview -jar target/monkeyj-jar-with-dependencies.jar
+
+pmd:
+	mvn --threads 8C clean verify pmd:check

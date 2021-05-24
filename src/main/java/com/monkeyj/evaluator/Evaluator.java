@@ -32,7 +32,7 @@ public final class Evaluator {
         return new Int(-(value));
     }
 
-    private static com.monkeyj.object.Obj evalPrefixExpression(final String operator, final com.monkeyj.object.Obj right) {
+    private static Obj evalPrefixExpression(final String operator, final Obj right) {
         return switch (operator) {
             case "!" -> evalBangOperatorExpression(right);
             case "-" -> evalMinusPrefixOperatorExpression(right);
