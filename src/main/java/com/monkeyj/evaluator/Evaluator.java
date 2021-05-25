@@ -41,8 +41,8 @@ public final class Evaluator {
     }
 
     private static Obj evalIntegerInfixExpression(final String operator, final Obj left, final Obj right) {
-        final var leftVal = ((Int) left).getValue();
-        final var rightVal = ((Int) right).getValue();
+        final int leftVal = ((Int) left).getValue();
+        final int rightVal = ((Int) right).getValue();
 
         return switch (operator) {
             case "+" -> new Int(leftVal + rightVal);

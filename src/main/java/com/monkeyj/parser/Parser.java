@@ -40,7 +40,6 @@ public class Parser {
         this.prefixParseFns = new HashMap<>();
         this.infixParseFns = new HashMap<>();
 
-        // this.prefixParseFns.put(TokenConstants.IDENT, () -> this.parseIdentifier());
         this.registerPrefix(TokenConstants.IDENT, this::parseIdentifier);
         this.registerPrefix(TokenConstants.INT, this::parseIntegerLiteral);
         this.registerPrefix(TokenConstants.BANG, this::parsePrefixExpression);

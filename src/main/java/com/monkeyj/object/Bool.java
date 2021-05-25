@@ -52,4 +52,11 @@ public class Bool implements Obj, Hashable {
         int value = this.value ? 1 : 0;
         return new HashKey(this.type(), value);
     }
+
+    @Override
+    public String toString() {
+        return "Bool{" +
+                "value=" + value +
+                '}';
+    }
 }

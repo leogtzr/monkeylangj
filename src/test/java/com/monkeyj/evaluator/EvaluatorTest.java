@@ -155,6 +155,12 @@ if (10 > 1) {
             new test("1 != 1", false),
             new test("1 == 2", false),
             new test("1 != 2", true),
+            new test("(1 + 2) * 3 == 3 + 2 * 3", true),
+            new test("(10 + 2) * 30 == 300 + 20 * 3", true),
+            new test("(5 > 5 == true) != false", false),
+            new test("500 / 2 != 250", false),
+            new test("3 + 4 * 5 == 3 * 1 + 4 * 5", true),
+            new test("5 * 10 > 40 + 5", true)
         };
 
         for (final test test : tests) {
