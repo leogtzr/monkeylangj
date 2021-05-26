@@ -1,0 +1,6 @@
+let myArray = ["one", "two", "three"];
+len(myArray);
+first(myArray);
+rest(myArray);
+last(myArray);
+push(myArray, "four")
