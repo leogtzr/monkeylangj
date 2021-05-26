@@ -1,7 +1,6 @@
 [1, 2, 3, 4][2];
 let myArray = [1, 2, 3, 4];
 
-// Closure:
 let gen_array = fn() { [4, 23, myArray[2], 498] };
 
 gen_array()[2];
