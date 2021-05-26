@@ -1,0 +1,5 @@
+let myHash = {"name": "Jimmy", "age": 72, "band": "Led Zeppelin"};
+myHash["name"];
+myHash["age"];
+myHash["band"];
+
