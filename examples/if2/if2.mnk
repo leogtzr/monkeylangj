@@ -1,0 +1,6 @@
+let a = 5;
+let b = a > 3;
+let c = a * 99;
+if (b) { 10 } else { 1 };
+let d = if (c > a) { 99 } else { 100 };
+d * c * a;

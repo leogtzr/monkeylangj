@@ -1,0 +1,10 @@
+// Literals ... 
+let addTwo = fn(x) { x + 2; };
+addTwo(2);
+let multiply = fn(x, y) { x * y };
+multiply(50 / 2, 1 * 2);
+
+fn(x) { x == 10 }(5);
+false;
+fn(x) { x == 10 }(10);
+true;
