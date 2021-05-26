@@ -1,0 +1,3 @@
+let hello = "Hello" + " " + "World";
+let str_len = len(hello);
+puts(str_len);
