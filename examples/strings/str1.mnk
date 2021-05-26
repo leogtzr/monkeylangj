@@ -1,0 +1,4 @@
+let hello = "Hello there, fellow Monkey users and fans!"
+let giveMeHello = fn() { "Hello!" }
+giveMeHello();
+
