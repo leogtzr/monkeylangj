@@ -6,13 +6,12 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Hash implements Obj {
+
     private Map<HashKey, HashPair> pairs;
 
     public Hash(final Map<HashKey, HashPair> pairs) {
         this.pairs = pairs;
     }
-
-    public Hash() { }
 
     public Map<HashKey, HashPair> getPairs() {
         return pairs;

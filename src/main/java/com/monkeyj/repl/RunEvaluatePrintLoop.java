@@ -24,9 +24,7 @@ public class RunEvaluatePrintLoop {
             """;
 
     private static void printParserErrors(final List<String> errors) {
-        for (final String error : errors) {
-            System.out.printf("\t%s\n", error);
-        }
+        errors.forEach(error -> System.out.printf("\t%s\n", error));
     }
 
     public static void main(final String[] args) {

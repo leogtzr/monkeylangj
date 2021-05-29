@@ -16,8 +16,8 @@ public class Keywords {
         "return", TokenConstants.RETURN
     );
 
-    public static String lookupIdentifier(final String ident) {
-        return KEYWORDS.getOrDefault(ident, TokenConstants.IDENT);
+    public static String lookupIdentifier(final String identifier) {
+        return KEYWORDS.getOrDefault(identifier, TokenConstants.IDENT);
     }
 
 }

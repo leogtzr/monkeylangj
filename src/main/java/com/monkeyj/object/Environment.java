@@ -14,9 +14,7 @@ public class Environment {
     }
 
     public static Environment newEnclosedEnvironment(final Environment outer) {
-        final var env = new Environment(outer);
-
-        return env;
+        return new Environment(outer);
     }
 
     private Environment(final Environment outer) {

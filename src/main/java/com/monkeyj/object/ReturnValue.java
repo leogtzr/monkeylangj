@@ -1,13 +1,12 @@
 package com.monkeyj.object;
 
 public class ReturnValue implements Obj {
+
     private Obj value;
 
     public ReturnValue(final Obj value) {
         this.value = value;
     }
-
-    public ReturnValue() {}
 
     public Obj getValue() {
         return value;

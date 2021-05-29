@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Function implements Obj {
+
     private List<Identifier> parameters;
     private BlockStatement body;
     private Environment env;
@@ -20,8 +21,6 @@ public class Function implements Obj {
         this.body = body;
         this.env = env;
     }
-
-    public Function() {}
 
     public List<Identifier> getParameters() {
         return parameters;

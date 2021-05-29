@@ -14,6 +14,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Parser {
+
     private final Lexer lexer;
     private final List<String> errors;
     private Token curToken;

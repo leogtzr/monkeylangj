@@ -130,12 +130,9 @@ public class Lexer {
 
     private String readString() {
         final int pos = this.position + 1;
-        for (;;) {
+        do {
             this.readChar();
-            if (this.ch == '"' || this.ch == 0) {
-                break;
-            }
-        }
+        } while (this.ch != '"' && this.ch != 0);
 
         return this.input.substring(pos, this.position);
     }

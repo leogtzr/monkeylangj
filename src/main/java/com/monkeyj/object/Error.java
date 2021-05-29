@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Error implements Obj {
 
-    private String message;
+    private final String message;
 
     public Error(final String message) {
         this.message = message;

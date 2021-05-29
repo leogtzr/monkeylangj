@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Array implements Obj {
 
-    private List<Obj> elements;
+    private final List<Obj> elements;
 
     public Array(final List<Obj> elements) {
         this.elements = elements;

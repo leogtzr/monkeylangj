@@ -104,8 +104,7 @@ if (10 > 1) {
         final Program program = parser.parseProgram();
         final var env = new Environment();
 
-        final var result = Evaluator.eval(program, env);
-        return result;
+        return Evaluator.eval(program, env);
     }
 
     private static boolean isValidIntegerObject(final Obj obj, final int expected) {
@@ -133,7 +132,7 @@ if (10 > 1) {
 
         final Bool result = (Bool) obj;
         if (result.getValue() != expected) {
-            System.err.println(String.format("object has wrong value. got=%b, want=%b", result.getValue(), expected));
+            System.err.printf("object has wrong value. got=%b, want=%b\n", result.getValue(), expected);
             return false;
         }
 
@@ -320,7 +319,7 @@ addTwo(2);
         assertEquals(
                 "Hello World!"
                 , str.getValue()
-                , String.format("String has wrong value, got=" + (str.getValue())));
+                , "String has wrong value, got=" + (str.getValue()));
     }
 
     @Test
@@ -458,7 +457,7 @@ addTwo(2);
                 """;
 
         final var evaluated = testEval(INPUT);
-        assertTrue(evaluated instanceof Hash, String.format("Eval didn't return Hash. got=%s", evaluated, evaluated));
+        assertTrue(evaluated instanceof Hash, String.format("Eval didn't return Hash. got=%s", evaluated));
 
         final Map<HashKey, Integer> expectedHashes = Map.of(
             Str.of("one").hashKey(), 1,

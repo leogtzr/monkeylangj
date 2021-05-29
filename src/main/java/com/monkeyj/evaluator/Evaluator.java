@@ -355,6 +355,7 @@ public final class Evaluator {
         return input ? Literals.TRUE : Literals.FALSE;
     }
 
+    /*
     private static Obj evalStatements(final List<Statement> statements, final Environment env) {
         Obj result = null;
 
@@ -368,6 +369,7 @@ public final class Evaluator {
 
         return result;
     }
+     */
 
     public static Error newError(final String format, final Object... args) {
         return new Error(String.format(format, args));

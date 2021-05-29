@@ -3,6 +3,7 @@ package com.monkeyj.object;
 import java.util.Objects;
 
 public class HashPair {
+
     private Obj key;
     private Obj value;
 

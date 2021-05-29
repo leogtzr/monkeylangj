@@ -6,6 +6,10 @@ public class Bool implements Obj, Hashable {
 
     private boolean value;
 
+    public static Bool of(final boolean value) {
+        return new Bool(value);
+    }
+
     public Bool(final boolean value) {
         this.value = value;
     }
