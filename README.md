@@ -20,14 +20,13 @@ This is a Java implementation of Thorsten Ball's Monkey Programming Language fro
 
 ### Precedence and Operators
 
-```
+```js
 5 * 5 + 10;
 3 + 4 * 5 == 3 * 1 + 4 * 5;
 5 * 10 > 40 + 5;
 ((10 + 2) * 30) == (300 + 20 * 3);
 (10 + 2) * 30 == 300 + 20 * 3;
 500 / 2 != 250;
-
 ```
 
 ### Bool type
@@ -38,32 +37,36 @@ puts(false == true);
 ```
 
 ### if
-```
+```js
 if (5 * 5 + 10 > 34) { puts(99) } else { puts(100) }
 ```
 
-```
+```js
 let a = 5;
 let b = a > 3;
 let c = a * 99;
+
 if (b) { 10 } else { 1 };
+
 let d = if (c > a) { 99 } else { 100 };
+
 d * c * a;
 ```
 
 ### String type
 You can also see how function literals can be used.
-```
+```js
 let hello = "Hello there, fellow Monkey users and fans!"
 let giveMeHello = fn() { "Hello!" }
-giveMeHello();
 
+giveMeHello();
 ```
 
 ### Arrays
 
-```
+```js
 let myArray = ["one", "two", "three"];
+
 len(myArray);
 first(myArray);
 rest(myArray);
@@ -73,8 +76,9 @@ push(myArray, "four")
 
 ## Hash
 
-```
+```js
 let myHash = {"name": "Jimmy", "age": 72, "band": "Led Zeppelin"};
+
 myHash["name"];
 myHash["age"];
 myHash["band"];
@@ -84,19 +88,25 @@ myHash["band"];
 
 ```js
 let two = "two";
+
 let h = { "one": 10 - 9, two: 1 + 1, "thr" + "ee": 6 / 2, 4: 4, true: 5, false: 6};
+
 h["one"];
 ```
 
 ```js
 let addTwo = fn(x) { x + 2; };
 addTwo(2);
+
 let multiply = fn(x, y) { x * y };
 multiply(50 / 2, 1 * 2);
 
 fn(x) { x == 10 }(5);
+
 false;
+
 fn(x) { x == 10 }(10);
+
 true;
 
 ```
