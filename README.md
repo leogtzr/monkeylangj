@@ -82,13 +82,13 @@ myHash["band"];
 
 ### Functions
 
-```
+```js
 let two = "two";
 let h = { "one": 10 - 9, two: 1 + 1, "thr" + "ee": 6 / 2, 4: 4, true: 5, false: 6};
 h["one"];
 ```
 
-```
+```js
 let addTwo = fn(x) { x + 2; };
 addTwo(2);
 let multiply = fn(x, y) { x * y };
