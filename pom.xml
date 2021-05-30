@@ -9,9 +9,8 @@
     <description>monkey language in Java</description>
     <properties>
         <java.version>16</java.version>
-        <junit.jupiter.version>5.7.1</junit.jupiter.version>
-        <junit.platform.version>1.7.1</junit.platform.version>
-        <mockito-core.version>3.8.0</mockito-core.version>
+        <junit.jupiter.version>5.7.2</junit.jupiter.version>
+        <junit.platform.version>1.7.2</junit.platform.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -26,12 +25,6 @@
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
             <version>${junit.platform.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito-core.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
