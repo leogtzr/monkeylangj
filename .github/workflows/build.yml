@@ -1,4 +1,4 @@
-name: monkeylangj build 
+name: build 
 
 on:
   push:

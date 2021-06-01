@@ -1,4 +1,4 @@
-name: monkeylangj tests
+name: tests
 
 on:
   push:
