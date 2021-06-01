@@ -1,7 +1,7 @@
 # monkey - Programming Language implementation in Java
 
 [![build](https://github.com/leogtzr/monkeylangj/actions/workflows/build.yml/badge.svg)](https://github.com/leogtzr/monkeylangj/actions/workflows/build.yml)
-[![testsssss](https://github.com/leogtzr/monkeylangj/actions/workflows/build.yml/badge.svg)](https://github.com/leogtzr/monkeylangj/actions/workflows/build.yml)
+[![tests](https://github.com/leogtzr/monkeylangj/actions/workflows/tests.yml/badge.svg)](https://github.com/leogtzr/monkeylangj/actions/workflows/tests.yml)
 
 This is a Java implementation of Thorsten Ball's Monkey Programming Language from his great book 
 [Writing An Interpreter in Go](https://interpreterbook.com/).
